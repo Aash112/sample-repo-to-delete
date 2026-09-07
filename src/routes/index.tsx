@@ -89,7 +89,11 @@ function Index() {
     setActivePhoto((current) => (current + direction + gallery.length) % gallery.length);
   };
 
-  const selectedPhoto = gallery[activePhoto] ?? gallery[0];
+  const selectedPhoto = gallery[activePhoto] ?? {
+    src: couplePortrait,
+    alt: "Aaroon and Olivia in emerald and ivory wedding attire",
+    title: "A new chapter",
+  };
 
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
