@@ -89,6 +89,8 @@ function Index() {
     setActivePhoto((current) => (current + direction + gallery.length) % gallery.length);
   };
 
+  const selectedPhoto = gallery[activePhoto] ?? gallery[0];
+
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
@@ -153,8 +155,8 @@ function Index() {
             <h2>Our story, in still moments</h2>
           </div>
           <div className="gallery-frame">
-            <img src={gallery[activePhoto].src} alt={gallery[activePhoto].alt} width={800} height={1200} />
-            <div className="gallery-caption"><span>{gallery[activePhoto].title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / 03</span></div>
+            <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} />
+            <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / 03</span></div>
             <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
             <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
           </div>
