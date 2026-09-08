@@ -156,6 +156,7 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-body);
+    scroll-behavior: smooth;
   }
 }
 
@@ -180,6 +181,7 @@
   background-color: var(--cream);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
   box-shadow: 0 0 90px oklch(0 0 0 / 35%);
+  scroll-behavior: smooth;
 }
 
 .invitation-paper::before {
@@ -229,6 +231,17 @@
 .button-gold:hover { background: var(--gold-500); color: var(--emerald-950); }
 .button-emerald { width: 100%; height: 3.25rem; background: var(--emerald-950); color: var(--gold-400); }
 .button-emerald:hover { background: var(--emerald-900); }
+
+.reveal-section {
+  opacity: 0;
+  transform: translateY(2.5rem);
+  transition: opacity 850ms ease, transform 850ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .floral-corner { position: absolute; z-index: 1; color: var(--gold-500); font-size: 4rem; line-height: .8; opacity: .2; }
 .floral-corner--top { top: 1rem; right: 1.5rem; transform: rotate(20deg); }
@@ -286,4 +299,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .reveal-section { opacity: 1; transform: none; }
 }
