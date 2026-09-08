@@ -66,7 +66,7 @@ function Index() {
   const [isOpen, setIsOpen] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [activePhoto, setActivePhoto] = useState(0);
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ function Index() {
   }, []);
 
   const countdown = useMemo(() => {
-    const difference = Math.max(0, weddingDate.getTime() - now.getTime());
+    const difference = Math.max(0, weddingDate.getTime() - (now ?? weddingDate).getTime());
     const totalSeconds = Math.floor(difference / 1000);
     return {
       days: Math.floor(totalSeconds / 86400),
