@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const weddingDate = new Date("2026-04-26T20:00:00");
+const weddingDate = new Date("2027-04-26T20:00:00");
 
 const gallery = [
   { src: couplePortrait, alt: "Aaroon and Olivia in emerald and ivory wedding attire", title: "A new chapter" },
@@ -39,7 +39,7 @@ const moments = [
   {
     number: "01",
     name: "Mehendi Ceremony",
-    date: "April 24, 2026",
+    date: "April 24, 2027",
     time: "6:00 PM onwards",
     location: "The Garden Courtyard",
     description: "An evening of music, laughter, sweets, and intricate henna designs with the women of our families.",
@@ -47,7 +47,7 @@ const moments = [
   {
     number: "02",
     name: "Wedding Ceremony",
-    date: "April 26, 2026",
+    date: "April 26, 2027",
     time: "8:00 PM sharp",
     location: "Liceria Grand Ballroom",
     description: "The Nikah and formal union of two souls, surrounded by the prayers and blessings of our loved ones.",
@@ -55,7 +55,7 @@ const moments = [
   {
     number: "03",
     name: "Valima Reception",
-    date: "April 27, 2026",
+    date: "April 27, 2027",
     time: "7:00 PM",
     location: "Liceria Grand Ballroom",
     description: "A grand feast and a joyful evening to celebrate our first days as husband and wife.",
@@ -138,7 +138,7 @@ function Index() {
             onClick={() => setIsRevealed(true)}
             aria-label={isRevealed ? "Wedding date revealed" : "Reveal the wedding date"}
           >
-            <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Six</small></span>
+            <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
             {!isRevealed && <span className="scratch-cover"><span>Scratch to reveal</span><Sparkles aria-hidden="true" /></span>}
           </button>
           <p className="date-note">Liceria Grand Ballroom · Any City</p>
@@ -204,7 +204,7 @@ function Index() {
           <p className="script-title footer-script">With love &amp; gratitude</p>
           <p className="footer-quote">“Your presence on this auspicious day is the greatest gift we could receive.”</p>
           <div className="family-grid"><div><span>Groom's family</span><strong>Mr. &amp; Mrs. Ahmed Siddiqui</strong><small>Family &amp; relatives</small></div><div><span>Bride's family</span><strong>Mr. &amp; Mrs. Salman Khan</strong><small>Family &amp; relatives</small></div><div><span>With thanks to</span><strong>Our grandparents</strong><small>Siblings &amp; cousins</small></div></div>
-          <div className="footer-mark">Aaroon &amp; Olivia · 2026</div>
+          <div className="footer-mark">Aaroon &amp; Olivia · 2027</div>
         </footer>
       </article>
     </main>
