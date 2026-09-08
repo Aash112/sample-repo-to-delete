@@ -256,6 +256,7 @@
 .gallery-section, .moments-section { position: relative; z-index: 2; padding: 5rem 2rem; }
 .section-heading { margin-bottom: 2.5rem; text-align: center; }
 .section-heading h2 { margin: .45rem 0 0; color: var(--emerald-950); font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); font-style: italic; font-weight: 500; }
+.section-heading h2::after { content: "✦"; display: block; margin-top: 1rem; color: var(--gold-500); font-size: .85rem; font-style: normal; letter-spacing: .6em; text-indent: .6em; }
 .section-heading p:not(.eyebrow) { color: oklch(0.29 0.09 163 / 67%); font-size: 1.15rem; }
 .gallery-frame { position: relative; width: min(100%, 42rem); margin: auto; overflow: hidden; background: var(--emerald-950); box-shadow: 0 1rem 2rem oklch(0.19 0.055 163 / 16%); }
 .gallery-frame img { display: block; width: 100%; aspect-ratio: 1.45 / 1; object-fit: cover; object-position: center 30%; transition: opacity 250ms ease; }
