@@ -74,6 +74,24 @@ function Index() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const revealableSections = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.12 },
+    );
+
+    revealableSections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
   const countdown = useMemo(() => {
     const difference = Math.max(0, weddingDate.getTime() - (now ?? weddingDate).getTime());
     const totalSeconds = Math.floor(difference / 1000);
@@ -121,16 +139,7 @@ function Index() {
         <div className="floral-corner floral-corner--top" aria-hidden="true">✦ ❁</div>
         <div className="floral-corner floral-corner--bottom" aria-hidden="true">❁ ✦</div>
 
-        <header className="invitation-hero">
-          <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-          <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
-          <div className="hero-rule"><span>✦</span></div>
-          <p className="eyebrow">Together with their families</p>
-          <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
-          <p className="hero-message">Invite you to join them in celebrating their union and a new chapter of love and laughter.</p>
-        </header>
-
-        <section className="date-reveal" aria-labelledby="date-title">
+        <section className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
           <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
           <button
             type="button"
@@ -144,7 +153,7 @@ function Index() {
           <p className="date-note">Liceria Grand Ballroom · Any City</p>
         </section>
 
-        <section className="countdown-band" aria-label="Countdown to the wedding">
+        <section className="countdown-band reveal-section" data-reveal aria-label="Countdown to the wedding">
           {Object.entries(countdown).map(([label, value]) => (
             <div className="countdown-unit" key={label}>
               <strong>{String(value).padStart(2, "0")}</strong>
@@ -153,7 +162,37 @@ function Index() {
           ))}
         </section>
 
-        <section className="gallery-section" aria-label="Aaroon and Olivia">
+        <header className="invitation-hero reveal-section" data-reveal>
+          <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+          <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
+          <div className="hero-rule"><span>✦</span></div>
+          <p className="eyebrow">Together with their families</p>
+          <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
+          <p className="hero-message">Invite you to join them in celebrating their union and a new chapter of love and laughter.</p>
+        </header>
+
+        <section className="moments-section reveal-section" data-reveal aria-labelledby="moments-title">
+          <div className="section-heading"><p className="eyebrow eyebrow--gold">Three moments, one celebration</p><h2 id="moments-title">The journey of our celebration</h2></div>
+          <div className="moments-list">
+            {moments.map((moment) => (
+              <article className="moment-row" key={moment.number}>
+                <div className="moment-index">{moment.number}</div>
+                <div className="moment-date"><span>{moment.date}</span><strong>{moment.time}</strong></div>
+                <div className="moment-detail"><h3>{moment.name}</h3><p>{moment.description}</p><span className="moment-location"><MapPin aria-hidden="true" /> {moment.location}</span></div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
+          <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
+          <p className="eyebrow eyebrow--gold">The venue</p>
+          <h2 id="venue-title">Liceria Grand Ballroom</h2>
+          <p>123 Anywhere St.<br />Any City, ST 12345</p>
+          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
+        </section>
+
+        <section className="gallery-section reveal-section" data-reveal aria-label="Aaroon and Olivia">
           <div className="section-heading">
             <p className="eyebrow eyebrow--gold">A glimpse of us</p>
             <h2>Our story, in still moments</h2>
@@ -166,28 +205,7 @@ function Index() {
           </div>
         </section>
 
-        <section className="moments-section" aria-labelledby="moments-title">
-          <div className="section-heading"><p className="eyebrow eyebrow--gold">Three moments, one celebration</p><h2 id="moments-title">Wedding moments</h2></div>
-          <div className="moments-list">
-            {moments.map((moment) => (
-              <article className="moment-row" key={moment.number}>
-                <div className="moment-index">{moment.number}</div>
-                <div className="moment-date"><span>{moment.date}</span><strong>{moment.time}</strong></div>
-                <div className="moment-detail"><h3>{moment.name}</h3><p>{moment.description}</p><span className="moment-location"><MapPin aria-hidden="true" /> {moment.location}</span></div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="venue-section" aria-labelledby="venue-title">
-          <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-          <p className="eyebrow eyebrow--gold">The venue</p>
-          <h2 id="venue-title">Liceria Grand Ballroom</h2>
-          <p>123 Anywhere St.<br />Any City, ST 12345</p>
-          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
-        </section>
-
-        <section className="rsvp-section" aria-labelledby="rsvp-title">
+        <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
           <div className="rsvp-card">
             <div className="section-heading"><p className="eyebrow eyebrow--gold">We hope you can join us</p><h2 id="rsvp-title">Kindly RSVP</h2><p>We would be honoured to celebrate with you.</p></div>
             {submitted ? <div className="rsvp-success" role="status"><span>✦</span><h3>Thank you for letting us know.</h3><p>Your response has been noted with love. We cannot wait to celebrate together.</p></div> : (
@@ -200,7 +218,7 @@ function Index() {
           </div>
         </section>
 
-        <footer className="invitation-footer">
+        <footer className="invitation-footer reveal-section" data-reveal>
           <p className="script-title footer-script">With love &amp; gratitude</p>
           <p className="footer-quote">“Your presence on this auspicious day is the greatest gift we could receive.”</p>
           <div className="family-grid"><div><span>Groom's family</span><strong>Mr. &amp; Mrs. Ahmed Siddiqui</strong><small>Family &amp; relatives</small></div><div><span>Bride's family</span><strong>Mr. &amp; Mrs. Salman Khan</strong><small>Family &amp; relatives</small></div><div><span>With thanks to</span><strong>Our grandparents</strong><small>Siblings &amp; cousins</small></div></div>
