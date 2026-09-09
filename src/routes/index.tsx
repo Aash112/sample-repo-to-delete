@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Clock3, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
+import bridePortrait from "@/assets/bride-portrait.jpg";
 import couplePortrait from "@/assets/couple-portrait.jpg";
 import groomPortrait from "@/assets/groom-portrait.jpg";
 import mehendiDetail from "@/assets/mehendi-detail.jpg";
@@ -139,20 +140,70 @@ function Index() {
         <div className="floral-corner floral-corner--top" aria-hidden="true">✦ ❁</div>
         <div className="floral-corner floral-corner--bottom" aria-hidden="true">❁ ✦</div>
 
-        <section className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
-          <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
-          <button
-            type="button"
-            className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
-            onClick={() => setIsRevealed(true)}
-            aria-label={isRevealed ? "Wedding date revealed" : "Reveal the wedding date"}
-          >
-            <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
-            {!isRevealed && <span className="scratch-cover"><span>Scratch to reveal</span><Sparkles aria-hidden="true" /></span>}
-          </button>
-          <p className="date-note">Liceria Grand Ballroom · Any City</p>
+        {/* 1. The invitation card: couple, love note, date reveal, venue */}
+        <header className="invitation-hero reveal-section" data-reveal>
+          <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+          <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
+          <div className="hero-rule"><span>✦</span></div>
+          <p className="eyebrow">Together with their families</p>
+          <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
+          <p className="hero-message">“Two souls, one heart, a lifetime of love — we invite you to witness the beginning of our forever.”</p>
+
+          <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
+            <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
+            <button
+              type="button"
+              className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
+              onClick={() => setIsRevealed(true)}
+              aria-label={isRevealed ? "Wedding date revealed" : "Reveal the wedding date"}
+            >
+              <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
+              {!isRevealed && <span className="scratch-cover"><span>Scratch to reveal</span><Sparkles aria-hidden="true" /></span>}
+            </button>
+            <p className="date-note">Liceria Grand Ballroom · Any City</p>
+          </div>
+
+          <div className="hero-venue">
+            <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
+            <p className="eyebrow eyebrow--gold">The venue</p>
+            <h2>Liceria Grand Ballroom</h2>
+            <p>123 Anywhere St., Any City, ST 12345</p>
+            <a className="button-outline button-outline--emerald" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
+          </div>
+        </header>
+
+        {/* 2. The couple, individually */}
+        <section className="couple-section reveal-section" data-reveal aria-labelledby="couple-title">
+          <div className="section-heading">
+            <p className="eyebrow eyebrow--gold">The bride &amp; groom</p>
+            <h2 id="couple-title">Two hearts, one journey</h2>
+          </div>
+          <div className="couple-grid">
+            <figure className="couple-card">
+              <div className="couple-card__frame">
+                <img src={groomPortrait} alt="Aaroon in an ivory sherwani with emerald embroidery" loading="lazy" width={832} height={1248} />
+              </div>
+              <figcaption>
+                <span className="eyebrow eyebrow--gold">The groom</span>
+                <h3>Aaroon Ahmed</h3>
+                <p>Son of Mr. &amp; Mrs. Ahmed Siddiqui</p>
+              </figcaption>
+            </figure>
+            <div className="couple-amp" aria-hidden="true">&amp;</div>
+            <figure className="couple-card">
+              <div className="couple-card__frame">
+                <img src={bridePortrait} alt="Olivia in an emerald lehenga with gold jewellery" loading="lazy" width={832} height={1248} />
+              </div>
+              <figcaption>
+                <span className="eyebrow eyebrow--gold">The bride</span>
+                <h3>Olivia Khan</h3>
+                <p>Daughter of Mr. &amp; Mrs. Salman Khan</p>
+              </figcaption>
+            </figure>
+          </div>
         </section>
 
+        {/* Countdown */}
         <section className="countdown-band reveal-section" data-reveal aria-label="Countdown to the wedding">
           {Object.entries(countdown).map(([label, value]) => (
             <div className="countdown-unit" key={label}>
@@ -162,49 +213,39 @@ function Index() {
           ))}
         </section>
 
-        <header className="invitation-hero reveal-section" data-reveal>
-          <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-          <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
-          <div className="hero-rule"><span>✦</span></div>
-          <p className="eyebrow">Together with their families</p>
-          <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
-          <p className="hero-message">Invite you to join them in celebrating their union and a new chapter of love and laughter.</p>
-        </header>
-
+        {/* 3. Function details along a path */}
         <section className="moments-section reveal-section" data-reveal aria-labelledby="moments-title">
           <div className="section-heading"><p className="eyebrow eyebrow--gold">Three moments, one celebration</p><h2 id="moments-title">The journey of our celebration</h2></div>
-          <div className="moments-list">
-            {moments.map((moment) => (
-              <article className="moment-row" key={moment.number}>
-                <div className="moment-index">{moment.number}</div>
-                <div className="moment-date"><span>{moment.date}</span><strong>{moment.time}</strong></div>
-                <div className="moment-detail"><h3>{moment.name}</h3><p>{moment.description}</p><span className="moment-location"><MapPin aria-hidden="true" /> {moment.location}</span></div>
+          <div className="journey-path">
+            {moments.map((moment, index) => (
+              <article className={`journey-stop ${index % 2 === 1 ? "journey-stop--right" : ""}`} key={moment.number}>
+                <div className="journey-node" aria-hidden="true"><span>{moment.number}</span></div>
+                <div className="journey-card">
+                  <div className="moment-date"><span>{moment.date}</span><strong>{moment.time}</strong></div>
+                  <h3>{moment.name}</h3>
+                  <p>{moment.description}</p>
+                  <span className="moment-location"><MapPin aria-hidden="true" /> {moment.location}</span>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
-          <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-          <p className="eyebrow eyebrow--gold">The venue</p>
-          <h2 id="venue-title">Liceria Grand Ballroom</h2>
-          <p>123 Anywhere St.<br />Any City, ST 12345</p>
-          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
-        </section>
-
+        {/* 4. Gallery */}
         <section className="gallery-section reveal-section" data-reveal aria-label="Aaroon and Olivia">
           <div className="section-heading">
             <p className="eyebrow eyebrow--gold">A glimpse of us</p>
             <h2>Our story, in still moments</h2>
           </div>
           <div className="gallery-frame">
-            <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} />
+            <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
             <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / 03</span></div>
             <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
             <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
           </div>
         </section>
 
+        {/* 5. RSVP */}
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
           <div className="rsvp-card">
             <div className="section-heading"><p className="eyebrow eyebrow--gold">We hope you can join us</p><h2 id="rsvp-title">Kindly RSVP</h2><p>We would be honoured to celebrate with you.</p></div>
@@ -218,6 +259,7 @@ function Index() {
           </div>
         </section>
 
+        {/* 6. Thanks */}
         <footer className="invitation-footer reveal-section" data-reveal>
           <p className="script-title footer-script">With love &amp; gratitude</p>
           <p className="footer-quote">“Your presence on this auspicious day is the greatest gift we could receive.”</p>
