@@ -163,13 +163,6 @@ function Index() {
             <p className="date-note">Liceria Grand Ballroom · Any City</p>
           </div>
 
-          <div className="hero-venue">
-            <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-            <p className="eyebrow eyebrow--gold">The venue</p>
-            <h2>Liceria Grand Ballroom</h2>
-            <p>123 Anywhere St., Any City, ST 12345</p>
-            <a className="button-outline button-outline--emerald" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
-          </div>
         </header>
 
         {/* 2. The couple, individually */}
