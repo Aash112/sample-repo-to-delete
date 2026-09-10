@@ -240,13 +240,27 @@ function Index() {
             <p className="eyebrow eyebrow--gold">A glimpse of us</p>
             <h2>Our story, in still moments</h2>
           </div>
-          <div className="gallery-frame">
-            <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
-            <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / 03</span></div>
-            <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
-            <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
-          </div>
+          {gallery.length <= 3 ? (
+            <div className="gallery-frame">
+              <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
+              <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}</span></div>
+              <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
+              <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
+            </div>
+          ) : (
+            <div className="gallery-grid">
+              {gallery.map((photo, index) => (
+                <figure className="gallery-grid__item" key={photo.title}>
+                  <div className="gallery-grid__frame">
+                    <img src={photo.src} alt={photo.alt} width={600} height={800} loading="lazy" />
+                  </div>
+                  <figcaption>{photo.title}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
         </section>
+
 
         {/* 5. RSVP */}
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
