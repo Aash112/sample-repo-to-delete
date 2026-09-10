@@ -224,6 +224,16 @@ function Index() {
           </div>
         </section>
 
+        {/* Venue */}
+        <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
+          <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
+          <p className="eyebrow eyebrow--gold" id="venue-title">The venue</p>
+          <h2>Liceria Grand Ballroom</h2>
+          <p>123 Anywhere St., Any City, ST 12345</p>
+          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
+        </section>
+
+
         {/* 4. Gallery */}
         <section className="gallery-section reveal-section" data-reveal aria-label="Aaroon and Olivia">
           <div className="section-heading">
