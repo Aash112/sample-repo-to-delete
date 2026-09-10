@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import bridePortrait from "@/assets/bride-portrait.jpg";
 import couplePortrait from "@/assets/couple-portrait.jpg";
@@ -63,9 +63,139 @@ const moments = [
   },
 ];
 
+function ScratchCard() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const scratching = useRef(false);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setIsRevealed(true);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const paintCover = () => {
+      const { width, height } = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      ctx.globalCompositeOperation = "source-over";
+      const stripe = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      stripe.addColorStop(0, "#c9a227");
+      stripe.addColorStop(0.5, "#e6c65c");
+      stripe.addColorStop(1, "#a8861c");
+      ctx.fillStyle = stripe;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "rgba(120, 88, 12, 0.35)";
+      ctx.lineWidth = 6 * dpr;
+      for (let x = -canvas.height; x < canvas.width + canvas.height; x += 22 * dpr) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + canvas.height, canvas.height);
+        ctx.stroke();
+      }
+      ctx.fillStyle = "#123524";
+      ctx.font = `600 ${13 * dpr}px "Cormorant Garamond", serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.letterSpacing = `${3 * dpr}px`;
+      ctx.fillText("SCRATCH TO REVEAL", canvas.width / 2, canvas.height / 2);
+    };
+
+    paintCover();
+    const observer = new ResizeObserver(paintCover);
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || isRevealed) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let last: { x: number; y: number } | null = null;
+    let moves = 0;
+
+    const eraseAt = (clientX: number, clientY: number) => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const x = (clientX - rect.left) * dpr;
+      const y = (clientY - rect.top) * dpr;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.lineWidth = 44 * dpr;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      if (last) ctx.moveTo(last.x, last.y);
+      else ctx.moveTo(x, y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      last = { x, y };
+
+      moves += 1;
+      if (moves % 6 === 0) {
+        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let cleared = 0;
+        for (let i = 3; i < data.length; i += 32) {
+          if (data[i] === 0) cleared += 1;
+        }
+        if (cleared / (data.length / 32) > 0.45) setIsRevealed(true);
+      }
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      scratching.current = true;
+      last = null;
+      canvas.setPointerCapture(event.pointerId);
+      eraseAt(event.clientX, event.clientY);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (!scratching.current) return;
+      eraseAt(event.clientX, event.clientY);
+    };
+    const onPointerUp = () => {
+      scratching.current = false;
+      last = null;
+    };
+
+    canvas.addEventListener("pointerdown", onPointerDown);
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp);
+    canvas.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp);
+      canvas.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [isRevealed]);
+
+  return (
+    <div
+      className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
+      role="button"
+      tabIndex={0}
+      aria-label={isRevealed ? "Wedding date revealed: April 26" : "Scratch to reveal the wedding date"}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setIsRevealed(true);
+        }
+      }}
+    >
+      <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
+      {!isRevealed && <canvas ref={canvasRef} className="scratch-canvas" aria-hidden="true" />}
+    </div>
+  );
+}
+
 function Index() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isRevealed, setIsRevealed] = useState(false);
   const [activePhoto, setActivePhoto] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -151,15 +281,7 @@ function Index() {
 
           <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
             <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
-            <button
-              type="button"
-              className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
-              onClick={() => setIsRevealed(true)}
-              aria-label={isRevealed ? "Wedding date revealed" : "Reveal the wedding date"}
-            >
-              <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
-              {!isRevealed && <span className="scratch-cover"><span>Scratch to reveal</span><Sparkles aria-hidden="true" /></span>}
-            </button>
+            <ScratchCard />
             <p className="date-note">Liceria Grand Ballroom · Any City</p>
           </div>
 
