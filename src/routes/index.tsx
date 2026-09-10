@@ -163,13 +163,6 @@ function Index() {
             <p className="date-note">Liceria Grand Ballroom · Any City</p>
           </div>
 
-          <div className="hero-venue">
-            <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-            <p className="eyebrow eyebrow--gold">The venue</p>
-            <h2>Liceria Grand Ballroom</h2>
-            <p>123 Anywhere St., Any City, ST 12345</p>
-            <a className="button-outline button-outline--emerald" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
-          </div>
         </header>
 
         {/* 2. The couple, individually */}
@@ -231,19 +224,43 @@ function Index() {
           </div>
         </section>
 
+        {/* Venue */}
+        <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
+          <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
+          <p className="eyebrow eyebrow--gold" id="venue-title">The venue</p>
+          <h2>Liceria Grand Ballroom</h2>
+          <p>123 Anywhere St., Any City, ST 12345</p>
+          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
+        </section>
+
+
         {/* 4. Gallery */}
         <section className="gallery-section reveal-section" data-reveal aria-label="Aaroon and Olivia">
           <div className="section-heading">
             <p className="eyebrow eyebrow--gold">A glimpse of us</p>
             <h2>Our story, in still moments</h2>
           </div>
-          <div className="gallery-frame">
-            <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
-            <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / 03</span></div>
-            <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
-            <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
-          </div>
+          {gallery.length <= 3 ? (
+            <div className="gallery-frame">
+              <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
+              <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}</span></div>
+              <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
+              <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
+            </div>
+          ) : (
+            <div className="gallery-grid">
+              {gallery.map((photo, index) => (
+                <figure className="gallery-grid__item" key={photo.title}>
+                  <div className="gallery-grid__frame">
+                    <img src={photo.src} alt={photo.alt} width={600} height={800} loading="lazy" />
+                  </div>
+                  <figcaption>{photo.title}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
         </section>
+
 
         {/* 5. RSVP */}
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
