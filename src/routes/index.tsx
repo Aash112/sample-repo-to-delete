@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import bridePortrait from "@/assets/bride-portrait.jpg";
@@ -277,15 +277,7 @@ function Index() {
 
           <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
             <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
-            <button
-              type="button"
-              className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
-              onClick={() => setIsRevealed(true)}
-              aria-label={isRevealed ? "Wedding date revealed" : "Reveal the wedding date"}
-            >
-              <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
-              {!isRevealed && <span className="scratch-cover"><span>Scratch to reveal</span><Sparkles aria-hidden="true" /></span>}
-            </button>
+            <ScratchCard />
             <p className="date-note">Liceria Grand Ballroom · Any City</p>
           </div>
 
