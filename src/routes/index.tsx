@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, MapPin, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 
 import bridePortrait from "@/assets/bride-portrait.jpg";
 import couplePortrait from "@/assets/couple-portrait.jpg";
