@@ -147,6 +147,7 @@ function ScratchCard() {
       for (let i = 3; i < data.length; i += 32) {
         if (data[i] === 0) cleared += 1;
       }
+      console.log("scratch ratio", cleared / (data.length / 32));
       if (cleared / (data.length / 32) > 0.35) setIsRevealed(true);
     };
 
