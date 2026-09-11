@@ -161,8 +161,10 @@ function ScratchCard() {
       eraseAt(event.clientX, event.clientY);
     };
     const onPointerUp = () => {
+      if (!scratching.current) return;
       scratching.current = false;
       last = null;
+      checkCleared();
     };
 
     canvas.addEventListener("pointerdown", onPointerDown);
