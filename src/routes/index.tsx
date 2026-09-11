@@ -138,14 +138,16 @@ function ScratchCard() {
       last = { x, y };
 
       moves += 1;
-      if (moves % 6 === 0) {
-        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let cleared = 0;
-        for (let i = 3; i < data.length; i += 32) {
-          if (data[i] === 0) cleared += 1;
-        }
-        if (cleared / (data.length / 32) > 0.45) setIsRevealed(true);
+      if (moves % 6 === 0) checkCleared();
+    };
+
+    const checkCleared = () => {
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let i = 3; i < data.length; i += 32) {
+        if (data[i] === 0) cleared += 1;
       }
+      if (cleared / (data.length / 32) > 0.35) setIsRevealed(true);
     };
 
     const onPointerDown = (event: PointerEvent) => {
