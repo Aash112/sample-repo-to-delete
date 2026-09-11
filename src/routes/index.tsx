@@ -127,6 +127,7 @@ function ScratchCard() {
       const x = (clientX - rect.left) * dpr;
       const y = (clientY - rect.top) * dpr;
       ctx.globalCompositeOperation = "destination-out";
+      ctx.strokeStyle = "rgba(0, 0, 0, 1)";
       ctx.lineWidth = 44 * dpr;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
