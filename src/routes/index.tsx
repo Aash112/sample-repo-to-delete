@@ -127,6 +127,7 @@ function ScratchCard() {
       const x = (clientX - rect.left) * dpr;
       const y = (clientY - rect.top) * dpr;
       ctx.globalCompositeOperation = "destination-out";
+      ctx.strokeStyle = "rgba(0, 0, 0, 1)";
       ctx.lineWidth = 44 * dpr;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
@@ -138,14 +139,16 @@ function ScratchCard() {
       last = { x, y };
 
       moves += 1;
-      if (moves % 6 === 0) {
-        const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let cleared = 0;
-        for (let i = 3; i < data.length; i += 32) {
-          if (data[i] === 0) cleared += 1;
-        }
-        if (cleared / (data.length / 32) > 0.45) setIsRevealed(true);
+      if (moves % 6 === 0) checkCleared();
+    };
+
+    const checkCleared = () => {
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+      for (let i = 3; i < data.length; i += 32) {
+        if (data[i] === 0) cleared += 1;
       }
+      if (cleared / (data.length / 32) > 0.35) setIsRevealed(true);
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -159,8 +162,10 @@ function ScratchCard() {
       eraseAt(event.clientX, event.clientY);
     };
     const onPointerUp = () => {
+      if (!scratching.current) return;
       scratching.current = false;
       last = null;
+      checkCleared();
     };
 
     canvas.addEventListener("pointerdown", onPointerDown);
