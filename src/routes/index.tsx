@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { CalendarDays, Clock3, Compass, Heart, MapPin, Moon, Sparkles, Star } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 
-import bridePortrait from "@/assets/bride-portrait.jpg";
-import couplePortrait from "@/assets/couple-portrait.jpg";
-import groomPortrait from "@/assets/groom-portrait.jpg";
-import mehendiDetail from "@/assets/mehendi-detail.jpg";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -29,12 +25,6 @@ export const Route = createFileRoute("/")({
 });
 
 const weddingDate = new Date("2027-04-26T20:00:00");
-
-const gallery = [
-  { src: couplePortrait, alt: "Aaroon and Olivia in emerald and ivory wedding attire", title: "A new chapter" },
-  { src: mehendiDetail, alt: "Intricate bridal mehendi with gold jewelry", title: "Joy in every detail" },
-  { src: groomPortrait, alt: "Aaroon in an ivory sherwani with emerald embroidery", title: "Together with grace" },
-];
 
 const moments = [
   {
@@ -63,14 +53,60 @@ const moments = [
   },
 ];
 
-function ScratchCard() {
+function CelebrationBurst({ trigger }: { trigger: number }) {
+  const pieces = useMemo(() => Array.from({ length: 42 }, (_, index) => ({
+    id: `${trigger}-${index}`,
+    left: 4 + ((index * 17) % 92),
+    delay: (index % 7) * 0.035,
+    duration: 1.5 + (index % 5) * 0.16,
+    rotate: (index * 47) % 360,
+    drift: ((index * 29) % 180) - 90,
+    scale: 0.72 + (index % 4) * 0.1,
+    shape: index % 3,
+  })), [trigger]);
+
+  if (!trigger) return null;
+
+  return (
+    <div className="celebration-burst" aria-hidden="true">
+      <div className="celebration-glow" />
+      {pieces.map((piece) => (
+        <span
+          className={`confetti-piece confetti-piece--${piece.shape}`}
+          key={piece.id}
+          style={{
+            "--confetti-left": `${piece.left}%`,
+            "--confetti-delay": `${piece.delay}s`,
+            "--confetti-duration": `${piece.duration}s`,
+            "--confetti-rotate": `${piece.rotate}deg`,
+            "--confetti-drift": `${piece.drift}px`,
+            "--confetti-scale": piece.scale,
+          } as CSSProperties}
+        />
+      ))}
+      <div className="celebration-message">
+        <Sparkles aria-hidden="true" />
+        <span>The date is revealed</span>
+        <Heart aria-hidden="true" fill="currentColor" />
+      </div>
+    </div>
+  );
+}
+
+function ScratchCard({ onReveal }: { onReveal: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
+  const [progress, setProgress] = useState(0);
   const scratching = useRef(false);
+  const revealStarted = useRef(false);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setIsRevealed(true);
-  }, []);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsRevealed(true);
+      revealStarted.current = true;
+      onReveal();
+    }
+  }, [onReveal]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -84,31 +120,37 @@ function ScratchCard() {
       canvas.width = Math.max(1, Math.round(width * dpr));
       canvas.height = Math.max(1, Math.round(height * dpr));
       ctx.globalCompositeOperation = "source-over";
-      const stripe = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      stripe.addColorStop(0, "#c9a227");
-      stripe.addColorStop(0.5, "#e6c65c");
-      stripe.addColorStop(1, "#a8861c");
-      ctx.fillStyle = stripe;
+
+      const foil = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      foil.addColorStop(0, "#7e5a0b");
+      foil.addColorStop(0.18, "#f1d878");
+      foil.addColorStop(0.38, "#b78b22");
+      foil.addColorStop(0.58, "#f5e39b");
+      foil.addColorStop(0.82, "#c29a31");
+      foil.addColorStop(1, "#765208");
+      ctx.fillStyle = foil;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = "rgba(120, 88, 12, 0.35)";
-      ctx.lineWidth = 6 * dpr;
-      for (let x = -canvas.height; x < canvas.width + canvas.height; x += 22 * dpr) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x + canvas.height, canvas.height);
-        ctx.stroke();
+
+      ctx.globalAlpha = 0.2;
+      ctx.strokeStyle = "#fff8d9";
+      ctx.lineWidth = 1.5 * dpr;
+      for (let x = -canvas.height; x < canvas.width + canvas.height; x += 26 * dpr) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + canvas.height, canvas.height); ctx.stroke();
       }
-      ctx.fillStyle = "#123524";
-      ctx.font = `600 ${13 * dpr}px "Cormorant Garamond", serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.letterSpacing = `${3 * dpr}px`;
-      ctx.fillText("SCRATCH TO REVEAL", canvas.width / 2, canvas.height / 2);
+      ctx.globalAlpha = 1;
+
+      const centerX = canvas.width / 2; const centerY = canvas.height / 2;
+      ctx.strokeStyle = "rgba(255,248,217,.72)"; ctx.lineWidth = 1 * dpr;
+      ctx.beginPath(); ctx.arc(centerX, centerY, 38 * dpr, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = "#123524"; ctx.font = `700 ${11 * dpr}px "Cormorant Garamond", serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("SCRATCH THE GOLD", centerX, centerY - 9 * dpr);
+      ctx.font = `500 ${8.5 * dpr}px "Cormorant Garamond", serif`;
+      ctx.fillText("TO REVEAL OUR DATE", centerX, centerY + 8 * dpr);
     };
 
     paintCover();
-    const observer = new ResizeObserver(paintCover);
-    observer.observe(canvas);
+    const observer = new ResizeObserver(paintCover); observer.observe(canvas);
     return () => observer.disconnect();
   }, []);
 
@@ -117,91 +159,73 @@ function ScratchCard() {
     if (!canvas || isRevealed) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    let last: { x: number; y: number } | null = null;
-    let moves = 0;
-
-    const eraseAt = (clientX: number, clientY: number) => {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const x = (clientX - rect.left) * dpr;
-      const y = (clientY - rect.top) * dpr;
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(0, 0, 0, 1)";
-      ctx.lineWidth = 44 * dpr;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.beginPath();
-      if (last) ctx.moveTo(last.x, last.y);
-      else ctx.moveTo(x, y);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      last = { x, y };
-
-      moves += 1;
-      if (moves % 6 === 0) checkCleared();
-    };
+    let last: { x: number; y: number } | null = null; let moves = 0;
 
     const checkCleared = () => {
       const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
       let cleared = 0;
-      for (let i = 3; i < data.length; i += 32) {
-        if (data[i] === 0) cleared += 1;
+      for (let i = 3; i < data.length; i += 32) if (data[i] === 0) cleared += 1;
+      const ratio = Math.min(1, cleared / (data.length / 32));
+      setProgress(ratio);
+      if (ratio > 0.35 && !revealStarted.current) {
+        revealStarted.current = true; setIsRevealed(true); onReveal();
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.([18, 35, 18]);
       }
-      if (cleared / (data.length / 32) > 0.35) setIsRevealed(true);
     };
 
-    const onPointerDown = (event: PointerEvent) => {
-      scratching.current = true;
-      last = null;
-      canvas.setPointerCapture(event.pointerId);
-      eraseAt(event.clientX, event.clientY);
-    };
-    const onPointerMove = (event: PointerEvent) => {
-      if (!scratching.current) return;
-      eraseAt(event.clientX, event.clientY);
-    };
-    const onPointerUp = () => {
-      if (!scratching.current) return;
-      scratching.current = false;
-      last = null;
-      checkCleared();
+    const eraseAt = (clientX: number, clientY: number) => {
+      const rect = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio || 1;
+      const x = (clientX - rect.left) * dpr; const y = (clientY - rect.top) * dpr;
+      ctx.globalCompositeOperation = "destination-out"; ctx.strokeStyle = "rgba(0,0,0,1)";
+      ctx.lineWidth = 46 * dpr; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.beginPath();
+      if (last) ctx.moveTo(last.x, last.y); else ctx.moveTo(x, y); ctx.lineTo(x, y); ctx.stroke();
+      last = { x, y }; moves += 1; if (moves % 5 === 0) checkCleared();
     };
 
-    canvas.addEventListener("pointerdown", onPointerDown);
-    canvas.addEventListener("pointermove", onPointerMove);
-    canvas.addEventListener("pointerup", onPointerUp);
-    canvas.addEventListener("pointercancel", onPointerUp);
+    const onPointerDown = (event: PointerEvent) => { scratching.current = true; last = null; canvas.setPointerCapture(event.pointerId); eraseAt(event.clientX, event.clientY); };
+    const onPointerMove = (event: PointerEvent) => { if (scratching.current) eraseAt(event.clientX, event.clientY); };
+    const onPointerUp = () => { if (!scratching.current) return; scratching.current = false; last = null; checkCleared(); };
+
+    canvas.addEventListener("pointerdown", onPointerDown); canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerup", onPointerUp); canvas.addEventListener("pointercancel", onPointerUp);
     return () => {
-      canvas.removeEventListener("pointerdown", onPointerDown);
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerup", onPointerUp);
-      canvas.removeEventListener("pointercancel", onPointerUp);
+      canvas.removeEventListener("pointerdown", onPointerDown); canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerup", onPointerUp); canvas.removeEventListener("pointercancel", onPointerUp);
     };
-  }, [isRevealed]);
+  }, [isRevealed, onReveal]);
+
+  const revealWithKeyboard = () => {
+    if (revealStarted.current) return; revealStarted.current = true; setProgress(1); setIsRevealed(true); onReveal();
+  };
 
   return (
     <div
       className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
       role="button"
       tabIndex={0}
-      aria-label={isRevealed ? "Wedding date revealed: April 26" : "Scratch to reveal the wedding date"}
+      aria-label={isRevealed ? "Wedding date revealed: April 26, 2027" : "Scratch to reveal the wedding date"}
       onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
+        if ((event.key === "Enter" || event.key === " ") && !revealStarted.current) {
           event.preventDefault();
-          setIsRevealed(true);
+          revealWithKeyboard();
         }
       }}
     >
-      <span className="scratch-date"><strong>April 26</strong><small>Two Thousand Twenty Seven</small></span>
+      <div className="scratch-card__halo" aria-hidden="true" />
+      <div className="scratch-card__inner">
+        <div className="scratch-card__topline"><span><CalendarDays aria-hidden="true" /> 26 · 04 · 27</span><span>{isRevealed ? "REVEALED" : `${Math.round(progress * 100)}%`}</span></div>
+        <span className="scratch-date"><small>Our forever begins</small><strong>April 26</strong><em>Two Thousand Twenty Seven</em></span>
+        {!isRevealed && <div className="scratch-hint" aria-hidden="true"><Sparkles /> <span>Scratch gently to uncover</span></div>}
+      </div>
       {!isRevealed && <canvas ref={canvasRef} className="scratch-canvas" aria-hidden="true" />}
+      <div className="scratch-card__stamp" aria-hidden="true">A <span>&amp;</span> O</div>
     </div>
   );
 }
 
 function Index() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activePhoto, setActivePhoto] = useState(0);
+  const [celebrationKey, setCelebrationKey] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
@@ -239,15 +263,7 @@ function Index() {
     };
   }, [now]);
 
-  const selectPhoto = (direction: number) => {
-    setActivePhoto((current) => (current + direction + gallery.length) % gallery.length);
-  };
-
-  const selectedPhoto = gallery[activePhoto] ?? {
-    src: couplePortrait,
-    alt: "Aaroon and Olivia in emerald and ivory wedding attire",
-    title: "A new chapter",
-  };
+  const celebrateReveal = useCallback(() => setCelebrationKey((key) => key + 1), []);
 
   const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -279,58 +295,57 @@ function Index() {
         <header className="invitation-hero reveal-section" data-reveal>
           <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
           <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
-          <div className="hero-rule"><span>✦</span></div>
+          <div className="hero-rule"><span>✦</span><i>بِسْمِ اللَّهِ</i><span>✦</span></div>
           <p className="eyebrow">Together with their families</p>
           <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
           <p className="hero-message">“Two souls, one heart, a lifetime of love — we invite you to witness the beginning of our forever.”</p>
+          <div className="hero-signature" aria-hidden="true"><span>With the blessings of our families</span><Heart /></div>
 
           <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
             <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
-            <ScratchCard />
-            <p className="date-note">Liceria Grand Ballroom · Any City</p>
+            <ScratchCard onReveal={celebrateReveal} />
+            <p className="date-note"><Sparkles aria-hidden="true" /> Liceria Grand Ballroom · Any City</p>
+            <CelebrationBurst trigger={celebrationKey} />
           </div>
 
         </header>
 
-        {/* 2. The couple, individually */}
-        <section className="couple-section reveal-section" data-reveal aria-labelledby="couple-title">
-          <div className="section-heading">
-            <p className="eyebrow eyebrow--gold">The bride &amp; groom</p>
-            <h2 id="couple-title">Two hearts, one journey</h2>
-          </div>
-          <div className="couple-grid">
-            <figure className="couple-card">
-              <div className="couple-card__frame">
-                <img src={groomPortrait} alt="Aaroon in an ivory sherwani with emerald embroidery" loading="lazy" width={832} height={1248} />
-              </div>
-              <figcaption>
-                <span className="eyebrow eyebrow--gold">The groom</span>
-                <h3>Aaroon Ahmed</h3>
-                <p>Son of Mr. &amp; Mrs. Ahmed Siddiqui</p>
-              </figcaption>
-            </figure>
-            <div className="couple-amp" aria-hidden="true">&amp;</div>
-            <figure className="couple-card">
-              <div className="couple-card__frame">
-                <img src={bridePortrait} alt="Olivia in an emerald lehenga with gold jewellery" loading="lazy" width={832} height={1248} />
-              </div>
-              <figcaption>
-                <span className="eyebrow eyebrow--gold">The bride</span>
-                <h3>Olivia Khan</h3>
-                <p>Daughter of Mr. &amp; Mrs. Salman Khan</p>
-              </figcaption>
-            </figure>
-          </div>
-        </section>
-
-        {/* Countdown */}
-        <section className="countdown-band reveal-section" data-reveal aria-label="Countdown to the wedding">
-          {Object.entries(countdown).map(([label, value]) => (
-            <div className="countdown-unit" key={label}>
-              <strong>{String(value).padStart(2, "0")}</strong>
-              <span>{label}</span>
+        {/* 2. A visual story instead of couple portraits */}
+        <section className="story-section reveal-section" data-reveal aria-labelledby="story-title">
+          <div className="story-intro">
+            <div className="story-seal" aria-hidden="true"><Moon /><span>A</span><i>&amp;</i><span>O</span></div>
+            <div>
+              <p className="eyebrow eyebrow--gold">A little more than a date</p>
+              <h2 id="story-title">A beginning written in gold.</h2>
+              <p>Before the music, before the lights, before everyone gathers around us — there is simply a promise. Two families, two stories, and one beautiful chapter about to begin.</p>
             </div>
-          ))}
+          </div>
+          <div className="story-grid">
+            <article className="story-panel story-panel--dark">
+              <span className="story-index">01</span>
+              <Star aria-hidden="true" />
+              <p className="eyebrow eyebrow--gold">The promise</p>
+              <h3>To choose each other, every day.</h3>
+              <p>Not only for the celebration, but for every ordinary morning, every difficult evening, and every quiet moment in between.</p>
+            </article>
+            <article className="story-panel story-panel--light">
+              <span className="story-index">02</span>
+              <Heart aria-hidden="true" />
+              <p className="eyebrow eyebrow--gold">The blessing</p>
+              <h3>Two families become one circle.</h3>
+              <p>With the blessings of our parents, grandparents, siblings, and everyone who has loved us into becoming who we are.</p>
+            </article>
+            <article className="story-panel story-panel--outline">
+              <span className="story-index">03</span>
+              <Compass aria-hidden="true" />
+              <p className="eyebrow eyebrow--gold">The invitation</p>
+              <h3>Your presence completes the picture.</h3>
+              <p>Come for the Nikah. Stay for the laughter. Leave with a memory we will carry for years.</p>
+            </article>
+          </div>
+          <div className="story-quote">
+            <span>“</span>What begins as two names on an invitation becomes a lifetime of memories.<span>”</span>
+          </div>
         </section>
 
         {/* 3. Function details along a path */}
@@ -351,43 +366,52 @@ function Index() {
           </div>
         </section>
 
-        {/* Venue */}
+        {/* Countdown — placed after the celebration schedule so the rhythm reads as story → moments → anticipation. */}
+        <section className="countdown-band reveal-section" data-reveal aria-label="Countdown to the wedding">
+          <div className="countdown-intro">
+            <p className="eyebrow eyebrow--gold">Until we say &ldquo;I do&rdquo;</p>
+          </div>
+          <div className="countdown-values">
+            {Object.entries(countdown).map(([label, value]) => (
+              <div className="countdown-unit" key={label}>
+                <strong>{String(value).padStart(2, "0")}</strong>
+                <span>{label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Venue + invitation close — one visual destination instead of two consecutive dark sections. */}
         <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
           <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-          <p className="eyebrow eyebrow--gold" id="venue-title">The venue</p>
-          <h2>Liceria Grand Ballroom</h2>
-          <p>123 Anywhere St., Any City, ST 12345</p>
-          <a className="button-outline" href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City" target="_blank" rel="noreferrer">Open Google Maps <span>↗</span></a>
-        </section>
+          <p className="eyebrow eyebrow--gold" id="venue-title">The place we gather</p>
+          <div className="venue-title-row">
+  <h2>Liceria Grand Ballroom</h2>
 
-
-        {/* 4. Gallery */}
-        <section className="gallery-section reveal-section" data-reveal aria-label="Aaroon and Olivia">
-          <div className="section-heading">
-            <p className="eyebrow eyebrow--gold">A glimpse of us</p>
-            <h2>Our story, in still moments</h2>
+  <a
+    className="venue-map-link"
+    href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City"
+    target="_blank"
+    rel="noreferrer"
+    aria-label="Open Liceria Grand Ballroom in Google Maps"
+  >
+    <MapPin size={15} />
+    <span>Open Google Maps</span>
+    <span aria-hidden="true">↗</span>
+  </a>
+</div>
+          <p className="venue-address">123 Anywhere St., Any City, ST 12345</p>
+          <div className="venue-divider" aria-hidden="true"><span>✦</span><i></i><span>✦</span></div>
+          <div className="venue-invite">
+            <p className="eyebrow eyebrow--gold">And then, we celebrate</p>
+            <h3>Come as our guest.<br /><em>Leave as family.</em></h3>
+            <div className="venue-meta">
+              <span><Clock3 aria-hidden="true" /> 8:00 PM</span>
+              <span><MapPin aria-hidden="true" /> Liceria Grand Ballroom</span>
+            </div>
+            <p>Dress in your favourite festive colours, bring your blessings, and let us make an evening worth remembering.</p>
           </div>
-          {gallery.length <= 3 ? (
-            <div className="gallery-frame">
-              <img src={selectedPhoto.src} alt={selectedPhoto.alt} width={800} height={1200} loading="lazy" />
-              <div className="gallery-caption"><span>{selectedPhoto.title}</span><span>{String(activePhoto + 1).padStart(2, "0")} / {String(gallery.length).padStart(2, "0")}</span></div>
-              <Button variant="outline" size="icon" className="gallery-control gallery-control--prev" onClick={() => selectPhoto(-1)} aria-label="Previous photo"><ChevronLeft /></Button>
-              <Button variant="outline" size="icon" className="gallery-control gallery-control--next" onClick={() => selectPhoto(1)} aria-label="Next photo"><ChevronRight /></Button>
-            </div>
-          ) : (
-            <div className="gallery-grid">
-              {gallery.map((photo, index) => (
-                <figure className="gallery-grid__item" key={photo.title}>
-                  <div className="gallery-grid__frame">
-                    <img src={photo.src} alt={photo.alt} width={600} height={800} loading="lazy" />
-                  </div>
-                  <figcaption>{photo.title}</figcaption>
-                </figure>
-              ))}
-            </div>
-          )}
         </section>
-
 
         {/* 5. RSVP */}
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
