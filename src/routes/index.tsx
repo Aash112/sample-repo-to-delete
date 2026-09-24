@@ -3,20 +3,15 @@ import { CalendarDays, Clock3, Compass, Heart, MapPin, Moon, Sparkles, Star } fr
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
+import { weddingConfig } from "@/config/wedding";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aaroon & Olivia — Wedding Invitation" },
-      {
-        name: "description",
-        content: "A royal Muslim wedding invitation for Aaroon and Olivia, with ceremony details, RSVP, and directions.",
-      },
-      { property: "og:title", content: "Aaroon & Olivia — Wedding Invitation" },
-      {
-        property: "og:description",
-        content: "Join Aaroon and Olivia as they celebrate their wedding with family and friends.",
-      },
+      { title: weddingConfig.seo.title },
+      { name: "description", content: weddingConfig.seo.description },
+      { property: "og:title", content: weddingConfig.seo.title },
+      { property: "og:description", content: weddingConfig.seo.ogDescription },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -24,34 +19,8 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const weddingDate = new Date("2027-04-26T20:00:00");
-
-const moments = [
-  {
-    number: "01",
-    name: "Mehendi Ceremony",
-    date: "April 24, 2027",
-    time: "6:00 PM onwards",
-    location: "The Garden Courtyard",
-    description: "An evening of music, laughter, sweets, and intricate henna designs with the women of our families.",
-  },
-  {
-    number: "02",
-    name: "Wedding Ceremony",
-    date: "April 26, 2027",
-    time: "8:00 PM sharp",
-    location: "Liceria Grand Ballroom",
-    description: "The Nikah and formal union of two souls, surrounded by the prayers and blessings of our loved ones.",
-  },
-  {
-    number: "03",
-    name: "Valima Reception",
-    date: "April 27, 2027",
-    time: "7:00 PM",
-    location: "Liceria Grand Ballroom",
-    description: "A grand feast and a joyful evening to celebrate our first days as husband and wife.",
-  },
-];
+const weddingDate = new Date(weddingConfig.date.iso);
+const moments = weddingConfig.moments;
 
 function CelebrationBurst({ trigger }: { trigger: number }) {
   const pieces = useMemo(() => Array.from({ length: 42 }, (_, index) => ({
@@ -86,7 +55,7 @@ function CelebrationBurst({ trigger }: { trigger: number }) {
       ))}
       <div className="celebration-message">
         <Sparkles aria-hidden="true" />
-        <span>The date is revealed</span>
+        <span>{weddingConfig.scratchCard.revealed}</span>
         <Heart aria-hidden="true" fill="currentColor" />
       </div>
     </div>
@@ -144,9 +113,9 @@ function ScratchCard({ onReveal }: { onReveal: () => void }) {
       ctx.beginPath(); ctx.arc(centerX, centerY, 38 * dpr, 0, Math.PI * 2); ctx.stroke();
       ctx.fillStyle = "#123524"; ctx.font = `700 ${11 * dpr}px "Cormorant Garamond", serif`;
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText("SCRATCH THE GOLD", centerX, centerY - 9 * dpr);
+      ctx.fillText(weddingConfig.scratchCard.scratchGold, centerX, centerY - 9 * dpr);
       ctx.font = `500 ${8.5 * dpr}px "Cormorant Garamond", serif`;
-      ctx.fillText("TO REVEAL OUR DATE", centerX, centerY + 8 * dpr);
+      ctx.fillText(weddingConfig.scratchCard.revealDate, centerX, centerY + 8 * dpr);
     };
 
     paintCover();
@@ -203,7 +172,7 @@ function ScratchCard({ onReveal }: { onReveal: () => void }) {
       className={`scratch-card ${isRevealed ? "scratch-card--revealed" : ""}`}
       role="button"
       tabIndex={0}
-      aria-label={isRevealed ? "Wedding date revealed: April 26, 2027" : "Scratch to reveal the wedding date"}
+      aria-label={isRevealed ? weddingConfig.scratchCard.revealedAria : weddingConfig.scratchCard.hiddenAria}
       onKeyDown={(event) => {
         if ((event.key === "Enter" || event.key === " ") && !revealStarted.current) {
           event.preventDefault();
@@ -213,12 +182,12 @@ function ScratchCard({ onReveal }: { onReveal: () => void }) {
     >
       <div className="scratch-card__halo" aria-hidden="true" />
       <div className="scratch-card__inner">
-        <div className="scratch-card__topline"><span><CalendarDays aria-hidden="true" /> 26 · 04 · 27</span><span>{isRevealed ? "REVEALED" : `${Math.round(progress * 100)}%`}</span></div>
-        <span className="scratch-date"><small>Our forever begins</small><strong>April 26</strong><em>Two Thousand Twenty Seven</em></span>
-        {!isRevealed && <div className="scratch-hint" aria-hidden="true"><Sparkles /> <span>Scratch gently to uncover</span></div>}
+        <div className="scratch-card__topline"><span><CalendarDays aria-hidden="true" /> {weddingConfig.date.numeric}</span><span>{isRevealed ? weddingConfig.scratchCard.revealed : `${Math.round(progress * 100)}%`}</span></div>
+        <span className="scratch-date"><small>{weddingConfig.scratchCard.foreverBegins}</small><strong>{weddingConfig.date.short}</strong><em>{weddingConfig.date.yearWords}</em></span>
+        {!isRevealed && <div className="scratch-hint" aria-hidden="true"><Sparkles /> <span>{weddingConfig.scratchCard.scratchHint}</span></div>}
       </div>
       {!isRevealed && <canvas ref={canvasRef} className="scratch-canvas" aria-hidden="true" />}
-      <div className="scratch-card__stamp" aria-hidden="true">A <span>&amp;</span> O</div>
+      <div className="scratch-card__stamp" aria-hidden="true">{weddingConfig.scratchCard.stampGroom} <span>&amp;</span> {weddingConfig.scratchCard.stampBride}</div>
     </div>
   );
 }
@@ -276,12 +245,12 @@ function Index() {
         <div className="envelope-card" role="dialog" aria-label="Wedding invitation envelope">
           <div className="envelope-card__pattern" />
           <div className="envelope-card__inner">
-            <div className="monogram">A <span>&amp;</span> O</div>
-            <p className="eyebrow eyebrow--gold">You are cordially invited to celebrate</p>
-            <h2 className="script-title">Aaroon &amp; Olivia</h2>
-            <p className="envelope-copy">A celebration of love, family and a beautiful beginning</p>
+            <div className="monogram">{weddingConfig.couple.monogram.groom} <span>&amp;</span> {weddingConfig.couple.monogram.bride}</div>
+            <p className="eyebrow eyebrow--gold">{weddingConfig.invitation.envelopeEyebrow}</p>
+            <h2 className="script-title">{weddingConfig.invitation.envelopeTitle}</h2>
+            <p className="envelope-copy">{weddingConfig.invitation.envelopeCopy}</p>
             <Button className="button-gold" onClick={() => setIsOpen(true)}>
-              Open invitation
+              {weddingConfig.invitation.openButton}
             </Button>
           </div>
         </div>
@@ -293,18 +262,18 @@ function Index() {
 
         {/* 1. The invitation card: couple, love note, date reveal, venue */}
         <header className="invitation-hero reveal-section" data-reveal>
-          <div className="arabic-mark" lang="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-          <p className="eyebrow">In the name of Allah, the Most Gracious, the Most Merciful</p>
-          <div className="hero-rule"><span>✦</span><i>بِسْمِ اللَّهِ</i><span>✦</span></div>
-          <p className="eyebrow">Together with their families</p>
-          <h1 className="couple-names"><span>Aaroon Ahmed</span><em>&amp;</em><span>Olivia Khan</span></h1>
-          <p className="hero-message">“Two souls, one heart, a lifetime of love — we invite you to witness the beginning of our forever.”</p>
-          <div className="hero-signature" aria-hidden="true"><span>With the blessings of our families</span><Heart /></div>
+          <div className="arabic-mark" lang="ar">{weddingConfig.invitation.arabic}</div>
+          <p className="eyebrow">{weddingConfig.invitation.arabicMeaning}</p>
+          <div className="hero-rule"><span>✦</span><i>{weddingConfig.invitation.arabicShort}</i><span>✦</span></div>
+          <p className="eyebrow">{weddingConfig.invitation.familyIntro}</p>
+          <h1 className="couple-names"><span>{weddingConfig.couple.groom.fullName}</span><em>&amp;</em><span>{weddingConfig.couple.bride.fullName}</span></h1>
+          <p className="hero-message">{weddingConfig.invitation.heroMessage}</p>
+          <div className="hero-signature" aria-hidden="true"><span>{weddingConfig.invitation.familyBlessing}</span><Heart /></div>
 
           <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
-            <p className="eyebrow eyebrow--gold" id="date-title">The day we wed</p>
+            <p className="eyebrow eyebrow--gold" id="date-title">{weddingConfig.invitation.dateEyebrow}</p>
             <ScratchCard onReveal={celebrateReveal} />
-            <p className="date-note"><Sparkles aria-hidden="true" /> Liceria Grand Ballroom · Any City</p>
+            <p className="date-note"><Sparkles aria-hidden="true" /> {weddingConfig.invitation.dateNote}</p>
             <CelebrationBurst trigger={celebrationKey} />
           </div>
 
@@ -322,35 +291,45 @@ function Index() {
           </div>
           <div className="story-grid">
             <article className="story-panel story-panel--dark">
-              <span className="story-index">01</span>
+              <span className="story-index">{weddingConfig.story.panels[0].number}</span>
               <Star aria-hidden="true" />
-              <p className="eyebrow eyebrow--gold">The promise</p>
-              <h3>To choose each other, every day.</h3>
-              <p>Not only for the celebration, but for every ordinary morning, every difficult evening, and every quiet moment in between.</p>
+              <p className="eyebrow eyebrow--gold">{weddingConfig.story.panels[0].eyebrow}</p>
+              <h3>{weddingConfig.story.panels[0].title}</h3>
+              <p>{weddingConfig.story.panels[0].description}</p>
             </article>
             <article className="story-panel story-panel--light">
-              <span className="story-index">02</span>
+              <span className="story-index">{weddingConfig.story.panels[1].number}</span>
               <Heart aria-hidden="true" />
-              <p className="eyebrow eyebrow--gold">The blessing</p>
-              <h3>Two families become one circle.</h3>
-              <p>With the blessings of our parents, grandparents, siblings, and everyone who has loved us into becoming who we are.</p>
+              <p className="eyebrow eyebrow--gold">{weddingConfig.story.panels[1].eyebrow}</p>
+              <h3>{weddingConfig.story.panels[1].title}</h3>
+              <p>{weddingConfig.story.panels[1].description}</p>
             </article>
             <article className="story-panel story-panel--outline">
-              <span className="story-index">03</span>
+              <span className="story-index">{weddingConfig.story.panels[2].number}</span>
               <Compass aria-hidden="true" />
-              <p className="eyebrow eyebrow--gold">The invitation</p>
-              <h3>Your presence completes the picture.</h3>
-              <p>Come for the Nikah. Stay for the laughter. Leave with a memory we will carry for years.</p>
+              <p className="eyebrow eyebrow--gold">{weddingConfig.story.panels[2].eyebrow}</p>
+              <h3>{weddingConfig.story.panels[2].title}</h3>
+              <p>{weddingConfig.story.panels[2].description}</p>
             </article>
           </div>
           <div className="story-quote">
-            <span>“</span>What begins as two names on an invitation becomes a lifetime of memories.<span>”</span>
+            <span>“</span>{weddingConfig.story.quote}<span>”</span>
           </div>
+        </section>
+
+        {/* Countdown */}
+        <section className="countdown-band reveal-section" data-reveal aria-label={weddingConfig.countdown.ariaLabel}>
+          {Object.entries(countdown).map(([label, value]) => (
+            <div className="countdown-unit" key={label}>
+              <strong>{String(value).padStart(2, "0")}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
         </section>
 
         {/* 3. Function details along a path */}
         <section className="moments-section reveal-section" data-reveal aria-labelledby="moments-title">
-          <div className="section-heading"><p className="eyebrow eyebrow--gold">Three moments, one celebration</p><h2 id="moments-title">The journey of our celebration</h2></div>
+          <div className="section-heading"><p className="eyebrow eyebrow--gold">{weddingConfig.momentsSection.eyebrow}</p><h2 id="moments-title">{weddingConfig.momentsSection.title}</h2></div>
           <div className="journey-path">
             {moments.map((moment, index) => (
               <article className={`journey-stop ${index % 2 === 1 ? "journey-stop--right" : ""}`} key={moment.number}>
@@ -366,62 +345,40 @@ function Index() {
           </div>
         </section>
 
-        {/* Countdown — placed after the celebration schedule so the rhythm reads as story → moments → anticipation. */}
-        <section className="countdown-band reveal-section" data-reveal aria-label="Countdown to the wedding">
-          <div className="countdown-intro">
-            <p className="eyebrow eyebrow--gold">Until we say &ldquo;I do&rdquo;</p>
-          </div>
-          <div className="countdown-values">
-            {Object.entries(countdown).map(([label, value]) => (
-              <div className="countdown-unit" key={label}>
-                <strong>{String(value).padStart(2, "0")}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Venue + invitation close — one visual destination instead of two consecutive dark sections. */}
+        {/* Venue */}
         <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
           <div className="venue-arch" aria-hidden="true"><span>✦</span></div>
-          <p className="eyebrow eyebrow--gold" id="venue-title">The place we gather</p>
-          <div className="venue-title-row">
-  <h2>Liceria Grand Ballroom</h2>
+          <p className="eyebrow eyebrow--gold" id="venue-title">{weddingConfig.venueSection.eyebrow}</p>
+          <h2>{weddingConfig.venue.name}</h2>
+          <p>{weddingConfig.venue.address}</p>
+          <a className="button-outline" href={weddingConfig.venue.mapsUrl} target="_blank" rel="noreferrer">{weddingConfig.venueSection.mapsLabel} <span>↗</span></a>
+        </section>
 
-  <a
-    className="venue-map-link"
-    href="https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City"
-    target="_blank"
-    rel="noreferrer"
-    aria-label="Open Liceria Grand Ballroom in Google Maps"
-  >
-    <MapPin size={15} />
-    <span>Open Google Maps</span>
-    <span aria-hidden="true">↗</span>
-  </a>
-</div>
-          <p className="venue-address">123 Anywhere St., Any City, ST 12345</p>
-          <div className="venue-divider" aria-hidden="true"><span>✦</span><i></i><span>✦</span></div>
-          <div className="venue-invite">
-            <p className="eyebrow eyebrow--gold">And then, we celebrate</p>
-            <h3>Come as our guest.<br /><em>Leave as family.</em></h3>
-            <div className="venue-meta">
-              <span><Clock3 aria-hidden="true" /> 8:00 PM</span>
-              <span><MapPin aria-hidden="true" /> Liceria Grand Ballroom</span>
+
+        {/* 4. A quiet pause before RSVP */}
+        <section className="pause-section reveal-section" data-reveal aria-labelledby="pause-title">
+          <div className="pause-card">
+            <div className="pause-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+            <p className="eyebrow eyebrow--gold">{weddingConfig.celebration.eyebrow}</p>
+            <h2 id="pause-title">{weddingConfig.celebration.firstLine}<br /><em>{weddingConfig.celebration.secondLine}</em></h2>
+            <div className="pause-meta">
+              <span><Clock3 aria-hidden="true" /> {weddingConfig.celebration.time}</span>
+              <span><MapPin aria-hidden="true" /> {weddingConfig.venue.name}</span>
             </div>
-            <p>Dress in your favourite festive colours, bring your blessings, and let us make an evening worth remembering.</p>
+            <div className="pause-line" aria-hidden="true"><span>✦</span><i></i><span>✦</span></div>
+            <p>{weddingConfig.celebration.description}</p>
           </div>
         </section>
 
         {/* 5. RSVP */}
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
           <div className="rsvp-card">
-            <div className="section-heading"><p className="eyebrow eyebrow--gold">We hope you can join us</p><h2 id="rsvp-title">Kindly RSVP</h2><p>We would be honoured to celebrate with you.</p></div>
-            {submitted ? <div className="rsvp-success" role="status"><span>✦</span><h3>Thank you for letting us know.</h3><p>Your response has been noted with love. We cannot wait to celebrate together.</p></div> : (
+            <div className="section-heading"><p className="eyebrow eyebrow--gold">{weddingConfig.rsvp.eyebrow}</p><h2 id="rsvp-title">{weddingConfig.rsvp.title}</h2><p>{weddingConfig.rsvp.intro}</p></div>
+            {submitted ? <div className="rsvp-success" role="status"><span>✦</span><h3>{weddingConfig.rsvp.successTitle}</h3><p>{weddingConfig.rsvp.successMessage}</p></div> : (
               <form onSubmit={submitRsvp} className="rsvp-form">
-                <label>Full name<input name="name" required placeholder="Your name" /></label>
-                <div className="rsvp-grid"><label>Guests<select name="guests" defaultValue="1"><option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option></select></label><label>Attendance<select name="attendance" defaultValue="joyfully-accept"><option value="joyfully-accept">Joyfully accept</option><option value="regretfully-decline">Regretfully decline</option></select></label></div>
-                <Button className="button-emerald" type="submit">Confirm attendance</Button>
+                <label>{weddingConfig.rsvp.nameLabel}<input name="name" required placeholder={weddingConfig.rsvp.namePlaceholder} /></label>
+                <div className="rsvp-grid"><label>{weddingConfig.rsvp.guestsLabel}<select name="guests" defaultValue="1">{weddingConfig.rsvp.guestOptions.map((option, index) => <option value={String(index + 1)} key={option}>{option}</option>)}</select></label><label>{weddingConfig.rsvp.attendanceLabel}<select name="attendance" defaultValue="joyfully-accept"><option value="joyfully-accept">{weddingConfig.rsvp.attendanceOptions.accept}</option><option value="regretfully-decline">{weddingConfig.rsvp.attendanceOptions.decline}</option></select></label></div>
+                <Button className="button-emerald" type="submit">{weddingConfig.rsvp.submit}</Button>
               </form>
             )}
           </div>
@@ -429,10 +386,10 @@ function Index() {
 
         {/* 6. Thanks */}
         <footer className="invitation-footer reveal-section" data-reveal>
-          <p className="script-title footer-script">With love &amp; gratitude</p>
-          <p className="footer-quote">“Your presence on this auspicious day is the greatest gift we could receive.”</p>
-          <div className="family-grid"><div><span>Groom's family</span><strong>Mr. &amp; Mrs. Ahmed Siddiqui</strong><small>Family &amp; relatives</small></div><div><span>Bride's family</span><strong>Mr. &amp; Mrs. Salman Khan</strong><small>Family &amp; relatives</small></div><div><span>With thanks to</span><strong>Our grandparents</strong><small>Siblings &amp; cousins</small></div></div>
-          <div className="footer-mark">Aaroon &amp; Olivia · 2027</div>
+          <p className="script-title footer-script">{weddingConfig.footer.script}</p>
+          <p className="footer-quote">{weddingConfig.footer.quote}</p>
+          <div className="family-grid"><div><span>{weddingConfig.footer.groomFamilyLabel}</span><strong>{weddingConfig.footer.groomFamily}</strong><small>{weddingConfig.footer.groomFamilyNote}</small></div><div><span>{weddingConfig.footer.brideFamilyLabel}</span><strong>{weddingConfig.footer.brideFamily}</strong><small>{weddingConfig.footer.brideFamilyNote}</small></div><div><span>{weddingConfig.footer.thanksLabel}</span><strong>{weddingConfig.footer.thanksName}</strong><small>{weddingConfig.footer.thanksNote}</small></div></div>
+          <div className="footer-mark">{weddingConfig.couple.displayName} · {weddingConfig.date.year}</div>
         </footer>
       </article>
     </main>

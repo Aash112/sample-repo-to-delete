@@ -327,14 +327,14 @@
 .date-reveal::after { right:-3.2rem; bottom:1.2rem; box-shadow:0 0 0 1.2rem oklch(.68 .12 80 / 5%),0 0 0 2.4rem oklch(.68 .12 80 / 3%); }
 .scratch-card { position:relative; width:min(100%,27rem); height:10.5rem; margin:1.15rem auto; overflow:hidden; border:1px solid oklch(.68 .12 80 / 50%); border-radius:1rem; background:linear-gradient(135deg,#fffdf4,#f5edcf); color:var(--emerald-950); cursor:crosshair; box-shadow:0 1.3rem 2.8rem oklch(.19 .055 163 / 12%),inset 0 0 0 5px oklch(.98 .018 95 / 70%); transition:transform 500ms cubic-bezier(.22,1,.36,1),box-shadow 500ms ease; }
 .scratch-card:hover { transform:translateY(-3px) rotate(-.25deg); box-shadow:0 1.8rem 3.5rem oklch(.19 .055 163 / 18%),inset 0 0 0 5px oklch(.98 .018 95 / 70%); }
-.scratch-card__inner { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; justify-content:center; padding:1rem 1.15rem; background:radial-gradient(circle at 50% 55%,oklch(.98 .018 95 / 90%),transparent 52%); }
+.scratch-card__inner { position:absolute; inset:0; z-index:1; display:flex; flex-direction:column; justify-content:space-between; padding:1rem 1.15rem; background:radial-gradient(circle at 50% 55%,oklch(.98 .018 95 / 90%),transparent 52%); }
 .scratch-card__topline { display:flex; justify-content:space-between; color:var(--gold-600); font-family:var(--font-display); font-size:.6rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; }
 .scratch-card__topline span { display:flex; align-items:center; gap:.3rem; }
 .scratch-card__topline svg { width:.75rem; height:.75rem; }
 .scratch-date { display:flex; align-items:center; justify-content:center; gap:.08rem; text-align:center; }
 .scratch-date small { color:var(--gold-600); font-family:var(--font-display); font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; }
 .scratch-date strong { margin-top:.05rem; font-family:var(--font-display); font-size:clamp(2.25rem,8vw,3.25rem); font-weight:500; line-height:.9; }
-.scratch-date em { display: block; margin-top: 0.65rem; color:var(--emerald-900); font-family:var(--font-body); font-size:.75rem; font-style:normal; letter-spacing:.15em; text-transform:uppercase; }
+.scratch-date em { color:var(--emerald-900); font-family:var(--font-body); font-size:.75rem; font-style:normal; letter-spacing:.15em; text-transform:uppercase; }
 .scratch-hint { display:flex; align-items:center; justify-content:center; gap:.35rem; color:var(--emerald-900); font-size:.78rem; font-style:italic; opacity:.72; }
 .scratch-hint svg { width:.8rem; animation:scratchSparkle 1.8s ease-in-out infinite; }
 .scratch-canvas { z-index:4; border-radius:1rem; }
@@ -443,54 +443,8 @@
 .story-seal::before { top: .5rem; }
 .story-seal::after { bottom: .5rem; }
 .story-seal svg { position: absolute; width: 1rem; height: 1rem; top: 1.2rem; color: var(--gold-600); }
-.story-seal {
-  position: relative;
-  display: grid;
-  place-items: center;
-
-  width: 7rem;
-  height: 7rem;
-
-  border: 1px solid var(--gold-500);
-  border-radius: 50%;
-
-  color: var(--emerald-950);
-  background: oklch(.98 .018 95 / 72%);
-
-  box-shadow:
-    0 0 0 1rem oklch(.68 .12 80 / 5%),
-    inset 0 0 0 5px oklch(.98 .018 95 / 80%);
-}
-
-.story-seal svg {
-  position: absolute;
-  top: 1rem;
-
-  width: .9rem;
-  height: .9rem;
-
-  color: var(--gold-600);
-}
-
-.story-seal span {
-  margin: 0;
-  transform: translateY(.25rem);
-
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1;
-}
-
-.story-seal i {
-  margin: 0;
-  transform: translateY(.15rem);
-
-  color: var(--gold-600);
-  font-family: var(--font-script);
-  font-size: 1.15rem;
-  font-style: normal;
-  line-height: 1;
-}
+.story-seal span { margin-top: .5rem; font-family: var(--font-display); font-size: 1.15rem; }
+.story-seal i { margin: .2rem 0 0; color: var(--gold-600); font-family: var(--font-script); font-size: 1.15rem; font-style: normal; }
 .story-grid {
   display: grid;
   grid-template-columns: 1.08fr .92fr .92fr;
@@ -528,195 +482,37 @@
 .story-quote { width: min(100%, 38rem); margin: 3.8rem auto 0; color: var(--emerald-900); font-family: var(--font-display); font-size: clamp(1.3rem, 3vw, 1.8rem); font-style: italic; line-height: 1.4; text-align: center; }
 .story-quote span { color: var(--gold-600); font-family: var(--font-script); font-size: 2.6rem; line-height: 0; vertical-align: -.45rem; }
 
-/* ---------- CELEBRATION / COME AS OUR GUEST ----------
-   Recovered from the previous working invitation design.
-   The dark green field, concentric orbit and gold rules are
-   intentionally retained; the frame prevents the section from
-   feeling like an unbounded block on mobile. */
-
 .pause-section {
   position: relative;
   z-index: 2;
-  min-height: 34rem;
   padding: 5.5rem 1.5rem;
-  background:
-    radial-gradient(
-      circle at 50% 48%,
-      oklch(.29 .09 163 / 10%) 0 14rem,
-      transparent 14.2rem
-    ),
-    var(--emerald-950);
+  background: var(--emerald-950);
   color: var(--gold-400);
   overflow: hidden;
-  isolation: isolate;
 }
-
-/* Recovered decorative background arcs. */
-.pause-section::before,
-.pause-section::after {
+.pause-section::before, .pause-section::after {
   content: "";
   position: absolute;
-  z-index: -1;
   border: 1px solid oklch(.82 .12 84 / 16%);
   border-radius: 50%;
   pointer-events: none;
 }
-
-.pause-section::before {
-  width: 27rem;
-  height: 27rem;
-  left: -19rem;
-  top: -10rem;
-  box-shadow:
-    0 0 0 2rem oklch(.82 .12 84 / 3%),
-    0 0 0 4rem oklch(.82 .12 84 / 2%);
-}
-
-.pause-section::after {
-  width: 19rem;
-  height: 19rem;
-  right: -13rem;
-  bottom: -9rem;
-}
-
-/* Old invitation-card framing, restored around the section. */
-.pause-section {
-  box-shadow:
-    inset 0 0 0 1px oklch(.68 .12 80 / 38%),
-    inset 0 0 0 1.1rem oklch(.68 .12 80 / 8%);
-}
-
-.pause-card {
-  position: relative;
-  width: min(100%, 46rem);
-  margin: auto;
-  padding: 3.5rem 2rem 2.75rem;
-  border: 1px solid oklch(.68 .12 80 / 20%);
-  outline: 1px solid oklch(.68 .12 80 / 9%);
-  outline-offset: .45rem;
-  text-align: center;
-}
-
-.pause-card::before,
-.pause-card::after {
-  content: "✦";
-  position: absolute;
-  top: .85rem;
-  color: var(--gold-500);
-  font-family: var(--font-display);
-  font-size: .55rem;
-  opacity: .85;
-}
-
-.pause-card::before { left: 1.25rem; }
-.pause-card::after { right: 1.25rem; }
-
-.pause-card .eyebrow {
-  color: var(--gold-500);
-  letter-spacing: .28em;
-}
-
-.pause-card h2 {
-  max-width: 40rem;
-  margin: .9rem auto 1.65rem;
-  color: var(--gold-400);
-  font-family: var(--font-display);
-  font-size: clamp(2.8rem, 7vw, 5rem);
-  font-style: italic;
-  font-weight: 400;
-  line-height: .92;
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-wrap: balance;
-}
-
-.pause-card h2 em {
-  color: var(--gold-500);
-  font-family: var(--font-script);
-  font-size: 1.1em;
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: normal;
-}
-
-.pause-card > p:last-child {
-  width: min(100%, 31rem);
-  margin: 1.65rem auto 0;
-  color: oklch(.82 .12 84 / 70%);
-  font-size: 1.1rem;
-  line-height: 1.55;
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-.pause-meta {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .8rem 1.5rem;
-  color: oklch(.82 .12 84 / 82%);
-  font-family: var(--font-display);
-  font-size: .72rem;
-  letter-spacing: .12em;
-  line-height: 1.35;
-  text-transform: uppercase;
-}
-
-.pause-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  white-space: nowrap;
-}
-
-.pause-meta svg {
-  width: .85rem;
-  height: .85rem;
-  color: var(--gold-500);
-}
-
-.pause-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .7rem;
-  width: min(100%, 14rem);
-  margin: 2rem auto 0;
-}
-
-.pause-line i {
-  flex: 1;
-  height: 1px;
-  background: oklch(.68 .12 80 / 40%);
-}
-
-.pause-line span {
-  color: var(--gold-500);
-  font-size: .6rem;
-}
-
-.pause-orbit {
-  position: absolute;
-  z-index: -1;
-  top: 50%;
-  left: 50%;
-  width: 20rem;
-  height: 20rem;
-  transform: translate(-50%, -52%);
-  pointer-events: none;
-  opacity: .35;
-}
-
-.pause-orbit span {
-  position: absolute;
-  inset: 0;
-  border: 1px solid oklch(.82 .12 84 / 15%);
-  border-radius: 50%;
-}
-
+.pause-section::before { width: 27rem; height: 27rem; left: -19rem; top: -10rem; box-shadow: 0 0 0 2rem oklch(.82 .12 84 / 3%), 0 0 0 4rem oklch(.82 .12 84 / 2%); }
+.pause-section::after { width: 19rem; height: 19rem; right: -13rem; bottom: -9rem; }
+.pause-card { position: relative; width: min(100%, 46rem); margin: auto; padding: 1rem 1.5rem; text-align: center; }
+.pause-card h2 { margin: .7rem 0 1.4rem; font-family: var(--font-display); font-size: clamp(2.8rem, 7vw, 5rem); font-style: italic; font-weight: 400; line-height: .92; }
+.pause-card h2 em { color: var(--gold-500); font-family: var(--font-script); font-size: 1.1em; font-style: normal; }
+.pause-card > p:last-child { width: min(100%, 31rem); margin: 1.5rem auto 0; color: oklch(.82 .12 84 / 70%); font-size: 1.1rem; line-height: 1.55; }
+.pause-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: .8rem 1.5rem; color: oklch(.82 .12 84 / 82%); font-family: var(--font-display); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+.pause-meta span { display: inline-flex; align-items: center; gap: .35rem; }
+.pause-meta svg { width: .85rem; height: .85rem; color: var(--gold-500); }
+.pause-line { display: flex; align-items: center; justify-content: center; gap: .7rem; width: min(100%, 14rem); margin: 2rem auto 0; }
+.pause-line i { flex: 1; height: 1px; background: oklch(.68 .12 80 / 40%); }
+.pause-line span { font-size: .6rem; }
+.pause-orbit { position: absolute; top: -1rem; left: 50%; width: 16rem; height: 16rem; transform: translateX(-50%); pointer-events: none; opacity: .35; }
+.pause-orbit span { position: absolute; inset: 0; border: 1px solid oklch(.82 .12 84 / 15%); border-radius: 50%; }
 .pause-orbit span:nth-child(2) { inset: 1.7rem; }
 .pause-orbit span:nth-child(3) { inset: 3.4rem; }
-
 
 @media (max-width: 700px) {
   .story-section { padding: 4.5rem 1.1rem; }
@@ -729,1202 +525,100 @@
   .pause-section { padding: 4.5rem 1rem; }
 }
 
-/* Mobile composition fixes: consistent alignment and a clearer narrative rhythm. */
-.countdown-band {
-  display: block;
-  padding: 3.2rem 1.5rem;
+
+/* =========================================================
+   VENUE + CELEBRATION FINAL POLISH
+   Matches the approved top-down venue and dark quote section.
+   ========================================================= */
+.venue-section {
+  padding: 5.2rem 1.5rem 4.8rem;
 }
-.countdown-intro {
-  margin-bottom: 1.35rem;
+
+.venue-section h2 {
+  width: min(100%, 20rem);
+  margin: 1.25rem auto 1.2rem;
+  line-height: .96;
   text-align: center;
 }
-.countdown-values {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  width: min(100%, 34rem);
-  margin: 0 auto;
-  gap: 1rem;
-}
-.countdown-unit {
-  min-width: 0;
-  align-items: center;
-}
-.countdown-unit strong { white-space: nowrap; }
 
-.venue-section {
-  padding: 5.5rem 1.5rem 5rem;
-}
-.venue-address {
-  max-width: 26rem;
+.venue-section > p:not(.eyebrow) {
+  width: min(100%, 24rem);
   margin: 0 auto;
 }
-.venue-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .7rem;
-  width: min(100%, 15rem);
-  margin: 2.2rem auto;
-  color: var(--gold-500);
-}
-.venue-divider i {
-  flex: 1;
-  height: 1px;
-  background: oklch(.68 .12 80 / 35%);
-}
-.venue-divider span { font-size: .55rem; }
-.venue-invite {
-  width: min(100%, 36rem);
-  margin: 0 auto 2rem;
-  padding: 2.2rem 1.25rem;
-  border-top: 1px solid oklch(.82 .12 84 / 18%);
-  border-bottom: 1px solid oklch(.82 .12 84 / 18%);
-}
-.venue-invite h3 {
-  margin: .75rem 0 1.15rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.3rem, 6vw, 3.8rem);
-  font-style: italic;
-  font-weight: 400;
-  line-height: .95;
-}
-.venue-invite h3 em {
-  color: var(--gold-500);
-  font-family: var(--font-script);
-  font-size: 1.08em;
-  font-style: normal;
-}
-.venue-meta {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .65rem 1.4rem;
-  color: oklch(.82 .12 84 / 82%);
-  font-family: var(--font-display);
-  font-size: .7rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.venue-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-}
-.venue-meta svg { width: .85rem; height: .85rem; color: var(--gold-500); }
-.venue-invite > p:last-child {
-  max-width: 28rem;
-  margin: 1.25rem auto 0;
-  color: oklch(.82 .12 84 / 70%);
-  font-size: 1.05rem;
-  line-height: 1.55;
+
+.button-outline {
+  margin-top: 1.7rem;
 }
 
-/* Keep the mobile story cards visually aligned and prevent uneven text blocks. */
-.story-section {
-  padding-inline: clamp(1.1rem, 5vw, 2rem);
+.pause-section {
+  padding: 5.6rem 1.2rem 5.4rem;
+  background: var(--emerald-950);
 }
-.story-intro,
-.story-grid,
-.story-quote {
+
+.pause-card {
   width: min(100%, 46rem);
+  padding: .8rem 1.2rem;
 }
-.story-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-.story-panel > svg { margin-bottom: 2rem; }
-.story-panel h3 { max-width: 16rem; }
-.story-panel p:last-child { margin-top: auto; }
 
-/* The timeline stays inside a predictable mobile gutter. */
-.journey-path {
-  width: min(100%, 42rem);
+.pause-card h2 {
+  margin: .8rem 0 1.7rem;
+  line-height: .9;
 }
-.journey-card {
-  min-width: 0;
+
+.pause-meta {
+  gap: .75rem 1.35rem;
+}
+
+.pause-line {
+  margin: 2rem auto 0;
+}
+
+.pause-card > p:last-child {
+  width: min(100%, 31rem);
+  margin: 1.7rem auto 0;
+  line-height: 1.55;
 }
 
 @media (max-width: 640px) {
-  .countdown-band { padding: 2.5rem 1rem; }
-  .countdown-values { gap: .35rem; }
-  .countdown-unit strong { font-size: 1.9rem; }
-  .countdown-unit span { font-size: .52rem; letter-spacing: .12em; }
-  .venue-section { padding: 4.5rem 1.1rem; }
-  .venue-invite { padding: 2rem .8rem; }
-  .venue-meta { gap: .55rem .8rem; font-size: .58rem; }
-  .venue-invite > p:last-child { font-size: .98rem; }
-}
-
-/* =========================================================
-   FINAL POLISH OVERRIDES
-   These rules intentionally come last so they override the
-   earlier composition rules without changing the rest of
-   the invitation design.
-   ========================================================= */
-
-/* ---------- STORY INTRO ---------- */
-
-.story-intro {
-  position: relative;
-}
-
-.story-intro h2 {
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-.story-intro > div:last-child > p:last-child {
-  letter-spacing: normal;
-}
-
-/* Keep the seal internally aligned and prevent the monogram
-   characters from drifting vertically. */
-.story-seal {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 7rem;
-  height: 7rem;
-  margin: 0;
-  border: 1px solid var(--gold-500);
-  border-radius: 50%;
-  background: oklch(.98 .018 95 / 72%);
-  color: var(--emerald-950);
-  box-shadow:
-    0 0 0 1rem oklch(.68 .12 80 / 5%),
-    inset 0 0 0 5px oklch(.98 .018 95 / 80%);
-}
-
-.story-seal svg {
-  position: absolute;
-  top: 1rem;
-  width: .9rem;
-  height: .9rem;
-  color: var(--gold-600);
-}
-
-.story-seal span {
-  margin: 0;
-  transform: translateY(.25rem);
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  line-height: 1;
-}
-
-.story-seal i {
-  margin: 0;
-  transform: translateY(.15rem);
-  color: var(--gold-600);
-  font-family: var(--font-script);
-  font-size: 1.15rem;
-  font-style: normal;
-  line-height: 1;
-}
-
-
-/* ---------- VENUE ---------- */
-
-.venue-section {
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
-  padding: 5.5rem 1.5rem 5rem;
-  background: var(--emerald-900);
-  color: var(--gold-400);
-  text-align: center;
-}
-
-/* Venue title + map action.
-   The title owns the visual weight; the Maps CTA is anchored
-   to the bottom of the title block instead of floating beside
-   the first line of the heading. */
-.venue-title-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 1rem;
-  width: min(100%, 34rem);
-  margin: .7rem auto 1rem;
-}
-
-.venue-title-row h2 {
-  min-width: 0;
-  max-width: none;
-  margin: 0;
-  color: var(--gold-400);
-  font-family: var(--font-display);
-  font-size: clamp(2.35rem, 5vw, 3.8rem);
-  font-style: normal;
-  font-weight: 500;
-  line-height: .96;
-  letter-spacing: normal;
-  word-spacing: normal;
-  text-align: right;
-}
-
-.venue-address {
-  max-width: 26rem;
-  margin: 0 auto;
-  color: oklch(.82 .12 84 / 78%);
-  font-size: 1.15rem;
-  line-height: 1.5;
-  letter-spacing: normal;
-}
-
-/* Compact map action.
-   Keep this beside the venue name for direct location access. */
-.venue-map-link {
-  align-self: end;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .42rem;
-  min-height: 2.65rem;
-  padding: .68rem .82rem;
-  border: 1px solid oklch(.82 .12 84 / 45%);
-  background: transparent;
-  color: var(--gold-400);
-  font-family: var(--font-display);
-  font-size: .56rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: .105em;
-  text-decoration: none;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transition:
-    background 200ms ease,
-    color 200ms ease,
-    border-color 200ms ease,
-    transform 200ms ease;
-}
-
-.venue-map-link:hover {
-  border-color: var(--gold-500);
-  background: var(--gold-500);
-  color: var(--emerald-950);
-  transform: translateY(-2px);
-}
-
-.venue-map-link:focus-visible {
-  outline: 2px solid var(--gold-400);
-  outline-offset: 4px;
-}
-
-.venue-map-link svg {
-  width: .78rem;
-  height: .78rem;
-  flex: 0 0 auto;
-}
-
-.venue-map-link span:last-child {
-  font-size: .75rem;
-  letter-spacing: 0;
-}
-
-.venue-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: .7rem;
-  width: min(100%, 15rem);
-  margin: 2.2rem auto;
-  color: var(--gold-500);
-}
-
-.venue-divider i {
-  flex: 1;
-  height: 1px;
-  background: oklch(.68 .12 80 / 35%);
-}
-
-.venue-divider span {
-  font-size: .55rem;
-}
-
-.venue-invite {
-  width: min(100%, 36rem);
-  margin: 0 auto 2rem;
-  padding: 2.2rem 1.25rem;
-  border-top: 1px solid oklch(.82 .12 84 / 18%);
-  border-bottom: 1px solid oklch(.82 .12 84 / 18%);
-}
-
-.venue-invite h3 {
-  max-width: 26rem;
-  margin: .75rem auto 1.15rem;
-  color: var(--gold-400);
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 6vw, 3.8rem);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-.venue-invite h3 em {
-  color: var(--gold-500);
-  font-family: var(--font-script);
-  font-size: 1.08em;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-.venue-meta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: .65rem 1.2rem;
-  color: oklch(.82 .12 84 / 82%);
-  font-family: var(--font-display);
-  font-size: .68rem;
-  line-height: 1.3;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-}
-
-.venue-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-}
-
-.venue-meta svg {
-  width: .85rem;
-  height: .85rem;
-  flex: 0 0 auto;
-  color: var(--gold-500);
-}
-
-.venue-invite > p:last-child {
-  max-width: 28rem;
-  margin: 1.25rem auto 0;
-  color: oklch(.82 .12 84 / 70%);
-  font-size: 1.05rem;
-  line-height: 1.55;
-  letter-spacing: normal;
-}
-
-
-/* ---------- LEGACY MAP BUTTON ---------- */
-/* If .button-outline is still present elsewhere, preserve its
-   styling. The old bottom-of-venue Maps button should be removed
-   from the JSX once .venue-map-link is added beside the title. */
-.button-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: .7rem;
-  margin-top: 1.5rem;
-  padding: .9rem 1.3rem;
-  border: 1px solid var(--gold-500);
-  background: transparent;
-  color: var(--gold-400);
-  font-family: var(--font-display);
-  font-size: .72rem;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  transition:
-    background 200ms ease,
-    color 200ms ease,
-    border-color 200ms ease;
-}
-
-.button-outline:hover {
-  background: var(--gold-500);
-  color: var(--emerald-950);
-}
-
-
-/* ---------- MOBILE STORY COMPOSITION ---------- */
-
-@media (max-width: 700px) {
-  .story-section {
-    padding: 4.5rem 1.1rem;
-  }
-
-  .story-intro {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.75rem;
-    width: min(100%, 46rem);
-    margin: 0 auto 3rem;
-    text-align: center;
-  }
-
-  .story-seal {
-    margin: 0 auto;
-  }
-
-  .story-intro h2 {
-    width: 100%;
-    max-width: 20rem;
-    margin: 0 auto 1.25rem;
-    font-size: clamp(2.35rem, 10vw, 3.4rem);
-    line-height: 1.02;
-    letter-spacing: normal;
-  }
-
-  .story-intro > div:last-child {
-    width: 100%;
-  }
-
-  .story-intro > div:last-child > p:last-child {
-    width: 100%;
-    max-width: 20rem;
-    margin: 0 auto;
-    font-size: 1rem;
-    line-height: 1.65;
-  }
-
-  .story-grid {
-    grid-template-columns: 1fr;
-    width: min(100%, 28rem);
-  }
-
-  .story-panel {
-    min-height: 15rem;
-  }
-
-  .story-panel > svg {
-    margin-bottom: 2rem;
-  }
-
   .venue-section {
-    padding: 4.5rem 1.1rem 4rem;
+    padding: 5rem 1rem 4.6rem;
   }
 
-  .venue-title-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: .7rem;
-    width: min(100%, 28rem);
+  .venue-section h2 {
+    width: min(100%, 18rem);
+    font-size: clamp(2.25rem, 10vw, 3.25rem);
   }
 
-  .venue-title-row h2 {
-    max-width: none;
-    font-size: clamp(2rem, 9vw, 2.7rem);
-    line-height: .94;
-    text-align: right;
+  .venue-section > p:not(.eyebrow) {
+    font-size: 1.1rem;
+    line-height: 1.45;
   }
 
-  .venue-map-link {
-    align-self: end;
-    min-height: 2.5rem;
-    padding: .62rem .68rem;
-    font-size: .49rem;
-    letter-spacing: .075em;
-  }
-
-  .venue-map-link svg {
-    width: .72rem;
-    height: .72rem;
-  }
-
-  .venue-invite {
-    padding: 2rem .8rem;
-  }
-
-  .venue-invite h3 {
-    max-width: 21rem;
-    font-size: clamp(2.05rem, 9vw, 3rem);
-    line-height: 1.02;
-  }
-
-  .venue-meta {
-    gap: .55rem .8rem;
-    font-size: .58rem;
-    letter-spacing: .06em;
-  }
-
-  .venue-invite > p:last-child {
-    font-size: .98rem;
-  }
-}
-
-@media (max-width: 420px) {
-  .venue-title-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: .5rem;
-    width: min(100%, 22rem);
-  }
-
-  .venue-title-row h2 {
-    max-width: none;
-    font-size: 2rem;
-    line-height: .94;
-  }
-
-  .venue-map-link {
-    min-height: 2.35rem;
-    padding: .48rem .55rem;
-    font-size: .46rem;
-    letter-spacing: .055em;
-  }
-
-  .venue-map-link span:last-child {
-    display: none;
-  }
-
-  .venue-invite h3 {
-    font-size: 2.15rem;
+  .button-outline {
+    margin-top: 1.55rem;
   }
 
   .pause-section {
-    min-height: 0;
-    padding: 4.5rem .9rem;
-    box-shadow:
-      inset 0 0 0 1px oklch(.68 .12 80 / 38%),
-      inset 0 0 0 .7rem oklch(.68 .12 80 / 8%);
+    padding: 5rem 1rem 4.8rem;
   }
 
   .pause-card {
-    padding: 2.8rem 1rem 2.2rem;
-    outline-offset: .3rem;
+    padding: .5rem .5rem;
   }
 
   .pause-card h2 {
-    font-size: clamp(2.45rem, 11vw, 3.4rem);
-    line-height: .92;
-  }
-
-  .pause-card > p:last-child {
-    font-size: 1rem;
+    margin: .75rem 0 1.55rem;
+    font-size: clamp(2.65rem, 12vw, 4.25rem);
   }
 
   .pause-meta {
-    gap: .65rem;
-    font-size: .58rem;
-    letter-spacing: .09em;
-  }
-
-  .pause-orbit {
-    width: 15rem;
-    height: 15rem;
-  }
-}
-
-/* =========================================================
-   FINAL VENUE + CELEBRATION MOBILE FIX
-   ========================================================= */
-
-/* ---------------------------------------------------------
-   VENUE SECTION
-   --------------------------------------------------------- */
-
-.venue-section {
-  position: relative;
-  z-index: 2;
-  padding: 5rem 1.25rem 4.5rem;
-  background: var(--emerald-900);
-  color: var(--gold-400);
-  text-align: center;
-  overflow: hidden;
-}
-
-/* Venue title and Maps CTA */
-.venue-title-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: .75rem;
-
-  width: min(100%, 25rem);
-  margin: .8rem auto 1rem;
-}
-
-.venue-title-row h2 {
-  flex: 0 1 auto;
-  min-width: 0;
-
-  margin: 0;
-
-  color: var(--gold-400);
-  font-family: var(--font-display);
-
-  font-size: clamp(2.1rem, 8vw, 3.25rem);
-  font-weight: 500;
-
-  line-height: .94;
-  letter-spacing: normal;
-  word-spacing: normal;
-
-  text-align: center;
-}
-
-/* ---------------------------------------------------------
-   MAP BUTTON
-   Keep it next to the venue name, but make it compact.
-   --------------------------------------------------------- */
-
-.venue-map-link {
-  flex: 0 0 auto;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 4.9rem;
-  min-width: 4.9rem;
-  height: 2.15rem;
-
-  padding: 0 .45rem;
-
-  border: 1px solid var(--gold-500);
-  background: transparent;
-
-  color: var(--gold-400);
-
-  font-family: var(--font-display);
-  font-size: .5rem;
-  font-weight: 600;
-
-  line-height: 1;
-  letter-spacing: .06em;
-
-  text-decoration: none;
-  text-transform: uppercase;
-
-  white-space: nowrap;
-
-  transition:
-    background 200ms ease,
-    color 200ms ease,
-    transform 200ms ease;
-}
-
-.venue-map-link:hover {
-  background: var(--gold-500);
-  color: var(--emerald-950);
-  transform: translateY(-1px);
-}
-
-.venue-map-link:focus-visible {
-  outline: 2px solid var(--gold-400);
-  outline-offset: 3px;
-}
-
-.venue-map-link svg {
-  width: .68rem;
-  height: .68rem;
-  flex: 0 0 auto;
-}
-
-/*
-   IMPORTANT:
-   Hide the long "OPEN GOOGLE MAPS" label.
-   Replace it visually with the much cleaner "MAPS".
-*/
-
-.venue-map-link span:last-child {
-  display: none !important;
-}
-
-.venue-map-link::after {
-  content: "MAPS";
-
-  display: block;
-
-  font-family: var(--font-display);
-  font-size: .5rem;
-  font-weight: 600;
-  letter-spacing: .08em;
-}
-
-/* ---------------------------------------------------------
-   VENUE ADDRESS
-   --------------------------------------------------------- */
-
-.venue-address {
-  width: min(100%, 24rem);
-  margin: 1.25rem auto 0;
-
-  color: oklch(.82 .12 84 / 82%);
-
-  font-size: 1.05rem;
-  line-height: 1.45;
-
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-/* ---------------------------------------------------------
-   VENUE DIVIDER
-   --------------------------------------------------------- */
-
-.venue-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: .7rem;
-
-  width: min(100%, 15rem);
-
-  margin: 2.1rem auto 0;
-
-  color: var(--gold-500);
-}
-
-.venue-divider i {
-  flex: 1;
-
-  height: 1px;
-
-  background: oklch(.68 .12 80 / 38%);
-}
-
-.venue-divider span {
-  flex: 0 0 auto;
-
-  font-size: .55rem;
-  line-height: 1;
-}
-
-/* ---------------------------------------------------------
-   CELEBRATION SECTION
-   Old "Come as our guest" visual language restored,
-   but with better mobile proportions.
-   --------------------------------------------------------- */
-
-.pause-section {
-  position: relative;
-  z-index: 2;
-
-  min-height: 42rem;
-
-  padding: 5rem 1.25rem 5.5rem;
-
-  background:
-    radial-gradient(
-      circle at 50% 48%,
-      oklch(.29 .09 163 / 12%) 0 10rem,
-      transparent 10.2rem
-    ),
-    var(--emerald-950);
-
-  color: var(--gold-400);
-
-  overflow: hidden;
-
-  isolation: isolate;
-
-  /*
-    Old card/frame effect
-  */
-  box-shadow:
-    inset 0 0 0 1px oklch(.68 .12 80 / 42%),
-    inset 0 0 0 1.1rem oklch(.68 .12 80 / 8%);
-}
-
-/* Large decorative arcs */
-
-.pause-section::before {
-  content: "";
-
-  position: absolute;
-  z-index: -1;
-
-  width: 32rem;
-  height: 32rem;
-
-  left: -22rem;
-  top: -9rem;
-
-  border: 1px solid oklch(.82 .12 84 / 15%);
-
-  border-radius: 50%;
-
-  box-shadow:
-    0 0 0 2rem oklch(.82 .12 84 / 3%),
-    0 0 0 4rem oklch(.82 .12 84 / 2%);
-}
-
-.pause-section::after {
-  content: "";
-
-  position: absolute;
-  z-index: -1;
-
-  width: 25rem;
-  height: 25rem;
-
-  right: -18rem;
-  bottom: -13rem;
-
-  border: 1px solid oklch(.82 .12 84 / 15%);
-
-  border-radius: 50%;
-}
-
-/* ---------------------------------------------------------
-   CELEBRATION INNER FRAME
-   --------------------------------------------------------- */
-
-.pause-card {
-  position: relative;
-
-  width: min(100%, 28rem);
-
-  margin: 0 auto;
-
-  padding: 4rem 1.25rem 3.5rem;
-
-  border: 1px solid oklch(.68 .12 80 / 20%);
-
-  outline: 1px solid oklch(.68 .12 80 / 9%);
-  outline-offset: .45rem;
-
-  text-align: center;
-}
-
-/* Small decorative stars */
-
-.pause-card::before,
-.pause-card::after {
-  content: "✦";
-
-  position: absolute;
-
-  top: 1rem;
-
-  color: var(--gold-500);
-
-  font-size: .55rem;
-
-  opacity: .85;
-}
-
-.pause-card::before {
-  left: 1.25rem;
-}
-
-.pause-card::after {
-  right: 1.25rem;
-}
-
-/* ---------------------------------------------------------
-   CELEBRATION EYEBROW
-   --------------------------------------------------------- */
-
-.pause-card .eyebrow {
-  margin: 0;
-
-  color: var(--gold-500);
-
-  font-family: var(--font-display);
-
-  font-size: .58rem;
-
-  letter-spacing: .28em;
-
-  line-height: 1.5;
-
-  text-transform: uppercase;
-}
-
-/* ---------------------------------------------------------
-   MAIN CELEBRATION MESSAGE
-   --------------------------------------------------------- */
-
-.pause-card h2 {
-  width: 100%;
-  max-width: 26rem;
-
-  margin: 1rem auto 1.8rem;
-
-  color: var(--gold-400);
-
-  font-family: var(--font-display);
-
-  font-size: clamp(3rem, 11vw, 4.7rem);
-
-  font-style: italic;
-  font-weight: 400;
-
-  line-height: .88;
-
-  letter-spacing: normal;
-  word-spacing: normal;
-
-  text-align: center;
-
-  text-wrap: balance;
-}
-
-.pause-card h2 em {
-  display: block;
-
-  margin-top: .15rem;
-
-  color: var(--gold-500);
-
-  font-family: var(--font-script);
-
-  font-size: 1.02em;
-
-  font-style: normal;
-  font-weight: 400;
-
-  line-height: .95;
-
-  letter-spacing: normal;
-}
-
-/* ---------------------------------------------------------
-   TIME + LOCATION
-   --------------------------------------------------------- */
-
-.pause-meta {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  flex-wrap: wrap;
-
-  gap: .7rem 1.1rem;
-
-  margin-top: 1.8rem;
-
-  color: oklch(.82 .12 84 / 82%);
-
-  font-family: var(--font-display);
-
-  font-size: .62rem;
-
-  letter-spacing: .1em;
-
-  line-height: 1.4;
-
-  text-transform: uppercase;
-}
-
-.pause-meta span {
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: .35rem;
-
-  white-space: nowrap;
-}
-
-.pause-meta svg {
-  width: .8rem;
-  height: .8rem;
-
-  color: var(--gold-500);
-
-  flex: 0 0 auto;
-}
-
-/* ---------------------------------------------------------
-   DECORATIVE DIVIDER
-   --------------------------------------------------------- */
-
-.pause-line {
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: .65rem;
-
-  width: min(100%, 15rem);
-
-  margin: 2rem auto 0;
-}
-
-.pause-line i {
-  flex: 1;
-
-  height: 1px;
-
-  background: oklch(.68 .12 80 / 42%);
-}
-
-.pause-line span {
-  color: var(--gold-500);
-
-  font-size: .6rem;
-}
-
-/* ---------------------------------------------------------
-   DESCRIPTION
-   --------------------------------------------------------- */
-
-.pause-card > p:last-child {
-  width: min(100%, 22rem);
-
-  margin: 2rem auto 0;
-
-  color: oklch(.82 .12 84 / 72%);
-
-  font-size: 1.05rem;
-
-  line-height: 1.65;
-
-  letter-spacing: normal;
-  word-spacing: normal;
-
-  text-align: center;
-}
-
-/* ---------------------------------------------------------
-   ORBIT
-   --------------------------------------------------------- */
-
-.pause-orbit {
-  position: absolute;
-
-  z-index: -1;
-
-  top: 50%;
-  left: 50%;
-
-  width: 19rem;
-  height: 19rem;
-
-  transform: translate(-50%, -52%);
-
-  pointer-events: none;
-
-  opacity: .32;
-}
-
-.pause-orbit span {
-  position: absolute;
-
-  inset: 0;
-
-  border: 1px solid oklch(.82 .12 84 / 14%);
-
-  border-radius: 50%;
-}
-
-.pause-orbit span:nth-child(2) {
-  inset: 1.7rem;
-}
-
-.pause-orbit span:nth-child(3) {
-  inset: 3.4rem;
-}
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
-
-@media (max-width: 420px) {
-
-  .venue-section {
-    padding: 4.5rem 1rem 4rem;
-  }
-
-  /*
-     Venue title gets most of the width.
-     Maps remains compact and doesn't push the title.
-  */
-
-  .venue-title-row {
-    display: grid;
-
-    grid-template-columns: minmax(0, 1fr) auto;
-
-    align-items: end;
-
-    gap: .55rem;
-
-    width: min(100%, 22rem);
-
-    margin: .75rem auto 1rem;
-  }
-
-  .venue-title-row h2 {
-    min-width: 0;
-
-    font-size: clamp(2rem, 9vw, 2.65rem);
-
-    line-height: .94;
-
-    text-align: right;
-  }
-
-  .venue-map-link {
-    width: 3.8rem;
-    min-width: 3.8rem;
-
-    height: 2rem;
-
-    padding: 0 .35rem;
-  }
-
-  .venue-map-link::after {
-    font-size: .46rem;
-    letter-spacing: .07em;
-  }
-
-  .venue-map-link svg {
-    width: .62rem;
-    height: .62rem;
-  }
-
-  .venue-address {
-    font-size: 1rem;
-  }
-
-  /* Celebration */
-
-  .pause-section {
-    min-height: 39rem;
-
-    padding: 4.2rem 1rem 4.5rem;
-
-    box-shadow:
-      inset 0 0 0 1px oklch(.68 .12 80 / 42%),
-      inset 0 0 0 .75rem oklch(.68 .12 80 / 8%);
-  }
-
-  .pause-card {
-    width: min(100%, 20rem);
-
-    padding: 3.25rem .8rem 3rem;
-
-    outline-offset: .3rem;
-  }
-
-  .pause-card h2 {
-    font-size: clamp(2.65rem, 12vw, 3.5rem);
-
-    line-height: .9;
+    gap: .65rem 1rem;
+    font-size: .64rem;
   }
 
   .pause-card > p:last-child {
-    width: min(100%, 17rem);
-
-    font-size: .98rem;
-
-    line-height: 1.65;
-  }
-
-  .pause-meta {
-    font-size: .55rem;
-
-    gap: .55rem .75rem;
-  }
-
-  .pause-orbit {
-    width: 15rem;
-    height: 15rem;
+    margin-top: 1.6rem;
+    font-size: 1rem;
+    line-height: 1.55;
   }
 }
