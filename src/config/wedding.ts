@@ -1,31 +1,31 @@
 export const weddingConfig = {
   couple: {
-    groom: { firstName: "Aaroon", lastName: "Ahmed", fullName: "Aaroon Ahmed" },
-    bride: { firstName: "Olivia", lastName: "Khan", fullName: "Olivia Khan" },
-    displayName: "Aaroon & Olivia",
-    monogram: { groom: "A", bride: "O" },
+    groom: { firstName: "Al-Ryan", lastName: "", fullName: "Al-Ryan" },
+    bride: { firstName: "Faseeha", lastName: "", fullName: "Faseeha" },
+    displayName: "Al-Ryan & Faseeha",
+    monogram: { groom: "A", bride: "F" },
   },
 
   date: {
-    iso: "2027-04-26T20:00:00+05:30",
-    display: "April 26, 2027",
-    short: "April 26",
-    yearWords: "Two Thousand Twenty Seven",
-    numeric: "26 · 04 · 27",
-    year: "2027",
+    iso: "2026-12-30T12:30:00+05:30",
+    display: "December 30, 2026",
+    short: "December 30",
+    yearWords: "Two Thousand Twenty Six",
+    numeric: "30 · 12 · 26",
+    year: "2026",
   },
 
   venue: {
-    name: "Liceria Grand Ballroom",
-    address: "123 Anywhere St., Any City, ST 12345",
-    city: "Any City",
-    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Liceria+Grand+Ballroom+123+Anywhere+St+Any+City",
+    name: "UAE Community Hall",
+    address: "Thengapattanam, Kanniyakumari",
+    city: "Thengapattanam",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=UAE+Community+Hall+Thengapattanam",
     mapsLabel: "Open Google Maps",
   },
-
+  
   invitation: {
     envelopeEyebrow: "You are cordially invited to celebrate",
-    envelopeTitle: "Aaroon & Olivia",
+    envelopeTitle: "Al-Ryan & Faseeha",
     envelopeCopy: "A celebration of love, family and a beautiful beginning",
     openButton: "Open invitation",
     arabic: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ",
@@ -35,11 +35,11 @@ export const weddingConfig = {
     heroMessage: "“Two souls, one heart, a lifetime of love — we invite you to witness the beginning of our forever.”",
     familyBlessing: "With the blessings of our families",
     dateEyebrow: "The day we wed",
-    dateNote: "Liceria Grand Ballroom · Any City",
+    dateNote: "A day to remember, a beginning to cherish",
   },
 
   scratchCard: {
-    revealedAria: "Wedding date revealed: April 26, 2027",
+    revealedAria: "Wedding date revealed: December 30, 2026",
     hiddenAria: "Scratch to reveal the wedding date",
     scratchGold: "SCRATCH THE GOLD",
     revealDate: "TO REVEAL OUR DATE",
@@ -47,7 +47,7 @@ export const weddingConfig = {
     foreverBegins: "Our forever begins",
     scratchHint: "Scratch gently to uncover",
     stampGroom: "A",
-    stampBride: "O",
+    stampBride: "F",
   },
 
   story: {
@@ -71,7 +71,7 @@ export const weddingConfig = {
         number: "03",
         eyebrow: "The invitation",
         title: "Your presence completes the picture.",
-        description: "Come for the Nikah. Stay for the laughter. Leave with a memory we will carry for years.",
+        description: "Come for the Nikkah. Stay for the laughter. Leave with a memory we will carry for years.",
       },
     ],
     quote: "What begins as two names on an invitation becomes a lifetime of memories.",
@@ -80,27 +80,11 @@ export const weddingConfig = {
   moments: [
     {
       number: "01",
-      name: "Mehendi Ceremony",
-      date: "April 24, 2027",
-      time: "6:00 PM onwards",
-      location: "The Garden Courtyard",
-      description: "An evening of music, laughter, sweets, and intricate henna designs with the women of our families.",
-    },
-    {
-      number: "02",
-      name: "Wedding Ceremony",
-      date: "April 26, 2027",
-      time: "8:00 PM sharp",
-      location: "Liceria Grand Ballroom",
-      description: "The Nikah and formal union of two souls, surrounded by the prayers and blessings of our loved ones.",
-    },
-    {
-      number: "03",
-      name: "Valima Reception",
-      date: "April 27, 2027",
-      time: "7:00 PM",
-      location: "Liceria Grand Ballroom",
-      description: "A grand feast and a joyful evening to celebrate our first days as husband and wife.",
+      name: "Nikkah Ceremony",
+      date: "December 30, 2026",
+      time: "12:30 PM – 1:30 PM",
+      location: "UAE Community Hall",
+      description: "The Nikkah and formal union of two souls, surrounded by the prayers and blessings of our loved ones.",
     },
   ],
 
@@ -110,8 +94,8 @@ export const weddingConfig = {
   },
 
   momentsSection: {
-    eyebrow: "Three moments, one celebration",
-    title: "The journey of our celebration",
+    eyebrow: "One beautiful moment",
+    title: "The day we begin our journey",
   },
 
   countdown: {
@@ -141,23 +125,26 @@ export const weddingConfig = {
     successMessage: "Your response has been noted with love. We cannot wait to celebrate together.",
   },
 
-  footer: {
-    script: "With love & gratitude",
-    quote: "“Your presence on this auspicious day is the greatest gift we could receive.”",
-    groomFamilyLabel: "Groom's family",
-    groomFamily: "Mr. & Mrs. Ahmed Siddiqui",
-    groomFamilyNote: "Family & relatives",
-    brideFamilyLabel: "Bride's family",
-    brideFamily: "Mr. & Mrs. Salman Khan",
-    brideFamilyNote: "Family & relatives",
-    thanksLabel: "With thanks to",
-    thanksName: "Our grandparents",
-    thanksNote: "Siblings & cousins",
-  },
+footer: {
+  script: "With love & gratitude",
 
+  quote: "“Your presence on this blessed day is the greatest gift we could receive.”",
+
+  groomFamilyLabel: "Groom's parents",
+  groomFamily: "S. Abdul Raheem & \n M. Siddi Navasia",
+  groomFamilyNote: "“With prayers, love, and blessings.”",
+
+  brideFamilyLabel: "Bride's parents",
+  brideFamily: "S. Syed Ali & \n J. Samsu Banu",
+  brideFamilyNote: "“With love, prayers, and heartfelt blessings.”",
+
+  thanksLabel: "Our siblings",
+  thanksName: "A. Azmiya · S. Fahima Azeez · \nS. Farha · S. Fathima",
+  thanksNote: "“Together in every moment, celebrating this beautiful beginning.”",
+},
   seo: {
-    title: "Aaroon & Olivia — Wedding Invitation",
-    description: "A royal Muslim wedding invitation for Aaroon and Olivia, with ceremony details, RSVP, and directions.",
-    ogDescription: "Join Aaroon and Olivia as they celebrate their wedding with family and friends.",
+    title: "Al-Ryan & Faseeha — Wedding Invitation",
+    description: "A royal Muslim wedding invitation for Al-Ryan and Faseeha, with ceremony details, RSVP, and directions.",
+    ogDescription: "Join Al-Ryan and Faseeha as they celebrate their wedding with family and friends.",
   },
 } as const;

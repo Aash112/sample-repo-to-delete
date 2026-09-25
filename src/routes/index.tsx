@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, Clock3, Compass, Heart, MapPin, Moon, Sparkles, Star } from "lucide-react";
+import { CalendarDays, Music, VolumeX, Clock3, ArrowUpRight, Compass, Heart, MapPin, Moon, Sparkles, Star } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { weddingConfig } from "@/config/wedding";
+
+// @ts-expect-error canvas-confetti does not provide declarations in this project.
+import confetti from "canvas-confetti";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,43 +26,55 @@ const weddingDate = new Date(weddingConfig.date.iso);
 const moments = weddingConfig.moments;
 
 function CelebrationBurst({ trigger }: { trigger: number }) {
-  const pieces = useMemo(() => Array.from({ length: 42 }, (_, index) => ({
-    id: `${trigger}-${index}`,
-    left: 4 + ((index * 17) % 92),
-    delay: (index % 7) * 0.035,
-    duration: 1.5 + (index % 5) * 0.16,
-    rotate: (index * 47) % 360,
-    drift: ((index * 29) % 180) - 90,
-    scale: 0.72 + (index % 4) * 0.1,
-    shape: index % 3,
-  })), [trigger]);
+  useEffect(() => {
+    if (!trigger) return;
 
-  if (!trigger) return null;
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
 
-  return (
-    <div className="celebration-burst" aria-hidden="true">
-      <div className="celebration-glow" />
-      {pieces.map((piece) => (
-        <span
-          className={`confetti-piece confetti-piece--${piece.shape}`}
-          key={piece.id}
-          style={{
-            "--confetti-left": `${piece.left}%`,
-            "--confetti-delay": `${piece.delay}s`,
-            "--confetti-duration": `${piece.duration}s`,
-            "--confetti-rotate": `${piece.rotate}deg`,
-            "--confetti-drift": `${piece.drift}px`,
-            "--confetti-scale": piece.scale,
-          } as CSSProperties}
-        />
-      ))}
-      <div className="celebration-message">
-        <Sparkles aria-hidden="true" />
-        <span>{weddingConfig.scratchCard.revealed}</span>
-        <Heart aria-hidden="true" fill="currentColor" />
-      </div>
-    </div>
-  );
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 9999,
+    };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        window.clearInterval(interval);
+        return;
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: {
+          x: randomInRange(0.1, 0.3),
+          y: Math.random() * 0.2,
+        },
+      });
+
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: {
+          x: randomInRange(0.7, 0.9),
+          y: Math.random() * 0.2,
+        },
+      });
+    }, 250);
+
+    return () => window.clearInterval(interval);
+  }, [trigger]);
+
+  return null;
 }
 
 function ScratchCard({ onReveal }: { onReveal: () => void }) {
@@ -197,6 +212,8 @@ function Index() {
   const [celebrationKey, setCelebrationKey] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
@@ -221,6 +238,7 @@ function Index() {
     return () => observer.disconnect();
   }, []);
 
+
   const countdown = useMemo(() => {
     const difference = Math.max(0, weddingDate.getTime() - (now ?? weddingDate).getTime());
     const totalSeconds = Math.floor(difference / 1000);
@@ -239,18 +257,89 @@ function Index() {
     setSubmitted(true);
   };
 
+  const toggleMusic = async () => {
+    const audio = audioRef.current;
+
+    if (!audio) {
+      console.error("Audio element not found");
+      return;
+    }
+
+    try {
+      if (audio.paused) {
+        await audio.play();
+        setIsMusicPlaying(true);
+      } else {
+        audio.pause();
+        setIsMusicPlaying(false);
+      }
+    } catch (error) {
+      console.error("Unable to play wedding music:", error);
+      setIsMusicPlaying(false);
+    }
+  };
+
   return (
     <main className="invitation-shell">
+      <audio
+        ref={audioRef}
+        src="/music/wedding-music.mp3"
+        loop
+        preload="auto"
+      />
+      <button
+        type="button"
+        className="music-toggle"
+        onClick={toggleMusic}
+        aria-label={isMusicPlaying ? "Mute wedding music" : "Play wedding music"}
+      >
+        {isMusicPlaying ? (
+          <Music aria-hidden="true" />
+        ) : (
+          <VolumeX aria-hidden="true" />
+        )}
+      </button>
       <div className={`envelope-screen ${isOpen ? "envelope-screen--open" : ""}`} aria-hidden={isOpen}>
         <div className="envelope-card" role="dialog" aria-label="Wedding invitation envelope">
           <div className="envelope-card__pattern" />
           <div className="envelope-card__inner">
-            <div className="monogram">{weddingConfig.couple.monogram.groom} <span>&amp;</span> {weddingConfig.couple.monogram.bride}</div>
+            <div className="couple-illustration">
+              <img
+                src="/images/couple-illustration.png"
+                alt="Wedding couple"
+              />
+            </div>
             <p className="eyebrow eyebrow--gold">{weddingConfig.invitation.envelopeEyebrow}</p>
-            <h2 className="script-title">{weddingConfig.invitation.envelopeTitle}</h2>
+            <h2 className="script-title couple-invitation-names">
+              <span>{weddingConfig.couple.groom.fullName}</span>
+              <em>&amp;</em>
+              <span>{weddingConfig.couple.bride.fullName}</span>
+            </h2>
             <p className="envelope-copy">{weddingConfig.invitation.envelopeCopy}</p>
-            <Button className="button-gold" onClick={() => setIsOpen(true)}>
-              {weddingConfig.invitation.openButton}
+            <Button
+              className="button-gold"
+              onClick={async () => {
+                window.scrollTo({
+                  top: 0,
+                  behavior: "instant",
+                });
+
+                setIsOpen(true);
+
+                const audio = audioRef.current;
+
+                if (audio) {
+                  try {
+                    await audio.play();
+                    setIsMusicPlaying(true);
+                  } catch (error) {
+                    console.error("Unable to start wedding music:", error);
+                  }
+                }
+              }}
+            >
+              <span>{weddingConfig.invitation.openButton}</span>
+              <ArrowUpRight aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -268,7 +357,7 @@ function Index() {
           <p className="eyebrow">{weddingConfig.invitation.familyIntro}</p>
           <h1 className="couple-names"><span>{weddingConfig.couple.groom.fullName}</span><em>&amp;</em><span>{weddingConfig.couple.bride.fullName}</span></h1>
           <p className="hero-message">{weddingConfig.invitation.heroMessage}</p>
-          <div className="hero-signature" aria-hidden="true"><span>{weddingConfig.invitation.familyBlessing}</span><Heart /></div>
+          <div className="hero-signature" aria-hidden="true"><span>{weddingConfig.invitation.familyBlessing}</span><Heart fill="currentColor" /></div>
 
           <div className="date-reveal reveal-section" data-reveal aria-labelledby="date-title">
             <p className="eyebrow eyebrow--gold" id="date-title">{weddingConfig.invitation.dateEyebrow}</p>
@@ -282,7 +371,7 @@ function Index() {
         {/* 2. A visual story instead of couple portraits */}
         <section className="story-section reveal-section" data-reveal aria-labelledby="story-title">
           <div className="story-intro">
-            <div className="story-seal" aria-hidden="true"><Moon /><span>A</span><i>&amp;</i><span>O</span></div>
+            
             <div>
               <p className="eyebrow eyebrow--gold">A little more than a date</p>
               <h2 id="story-title">A beginning written in gold.</h2>
@@ -327,23 +416,45 @@ function Index() {
           ))}
         </section>
 
-        {/* 3. Function details along a path */}
-        <section className="moments-section reveal-section" data-reveal aria-labelledby="moments-title">
-          <div className="section-heading"><p className="eyebrow eyebrow--gold">{weddingConfig.momentsSection.eyebrow}</p><h2 id="moments-title">{weddingConfig.momentsSection.title}</h2></div>
-          <div className="journey-path">
-            {moments.map((moment, index) => (
-              <article className={`journey-stop ${index % 2 === 1 ? "journey-stop--right" : ""}`} key={moment.number}>
-                <div className="journey-node" aria-hidden="true"><span>{moment.number}</span></div>
-                <div className="journey-card">
-                  <div className="moment-date"><span>{moment.date}</span><strong>{moment.time}</strong></div>
-                  <h3>{moment.name}</h3>
-                  <p>{moment.description}</p>
-                  <span className="moment-location"><MapPin aria-hidden="true" /> {moment.location}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
+{/* 3. Function details */}
+<section
+  className="moments-section reveal-section"
+  data-reveal
+  aria-labelledby="moments-title"
+>
+  <div className="section-heading">
+    <p className="eyebrow eyebrow--gold">
+      {weddingConfig.momentsSection.eyebrow}
+    </p>
+    <h2 id="moments-title">
+      {weddingConfig.momentsSection.title}
+    </h2>
+  </div>
+
+  <div className="moment-single">
+    {moments.map((moment) => (
+      <article className="moment-card" key={moment.number}>
+
+
+
+        <h3>{moment.name}</h3>
+
+        <p>{moment.description}</p>
+        <div className="moment-card__divider" aria-hidden="true" />
+
+        <div className="moment-card__date">
+          <span>{moment.date}</span>
+          <strong>{moment.time}</strong>
+        </div>
+{/*        <span className="moment-card__location">
+          <MapPin aria-hidden="true" />
+          {moment.location}
+        </span>
+        */}
+      </article>
+    ))}
+  </div>
+</section>
 
         {/* Venue */}
         <section className="venue-section reveal-section" data-reveal aria-labelledby="venue-title">
@@ -361,10 +472,7 @@ function Index() {
             <div className="pause-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
             <p className="eyebrow eyebrow--gold">{weddingConfig.celebration.eyebrow}</p>
             <h2 id="pause-title">{weddingConfig.celebration.firstLine}<br /><em>{weddingConfig.celebration.secondLine}</em></h2>
-            <div className="pause-meta">
-              <span><Clock3 aria-hidden="true" /> {weddingConfig.celebration.time}</span>
-              <span><MapPin aria-hidden="true" /> {weddingConfig.venue.name}</span>
-            </div>
+        
             <div className="pause-line" aria-hidden="true"><span>✦</span><i></i><span>✦</span></div>
             <p>{weddingConfig.celebration.description}</p>
           </div>
