@@ -8,7 +8,7 @@ import { weddingConfig } from "@/config/wedding";
 // @ts-expect-error canvas-confetti does not provide declarations in this project.
 import confetti from "canvas-confetti";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/invite/a7K9xP4mQ2L8")({
   head: () => ({
     meta: [
       { title: weddingConfig.seo.title },
@@ -17,6 +17,7 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: weddingConfig.seo.ogDescription },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, nofollow, noarchive",},
     ],
   }),
   component: Index,
