@@ -542,7 +542,7 @@
 .story-intro {
   position: relative;
   display: grid;
-  grid-template-columns: 8rem 1fr;
+  grid-template-columns: 1fr;
   gap: 2.2rem;
   align-items: center;
   width: min(100%, 48rem);
@@ -553,7 +553,7 @@
 
 .story-intro h2 {
   width: 100%;
-  max-width: 35rem;
+  max-width: 100%;
   margin: .45rem 0 .8rem;
   box-sizing: border-box;
   color: var(--emerald-950);
@@ -567,7 +567,7 @@
 }
 
 .story-intro > div:last-child > p:last-child {
-  max-width: 37rem;
+  max-width: 100%;
   margin: 0;
   color: oklch(0.29 0.09 163 / 72%);
   font-size: 1.18rem;
