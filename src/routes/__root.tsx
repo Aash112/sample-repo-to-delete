@@ -73,10 +73,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aaroon & Olivia — Wedding Invitation" },
+      { title: "Aaroon & Olivia - Wedding Invitation" },
       { name: "description", content: "A royal Muslim wedding invitation for Aaroon and Olivia." },
       { name: "author", content: "Aaroon & Olivia" },
-      { property: "og:title", content: "Aaroon & Olivia — Wedding Invitation" },
+      { property: "og:title", content: "Aaroon & Olivia - Wedding Invitation" },
       { property: "og:description", content: "Join Aaroon and Olivia as they celebrate their wedding with family and friends." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

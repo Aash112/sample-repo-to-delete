@@ -407,7 +407,12 @@
   color: var(--emerald-950);
 }
 
-
+.rsvp-error {
+  margin: 0 0 1rem;
+  text-align: center;
+  color: #b42318;
+  font-size: 0.9rem;
+}
 .rsvp-section { position: relative; z-index: 2; padding: 5rem 1.5rem; }.rsvp-card { max-width: 42rem; margin: auto; padding: clamp(2rem, 6vw, 4.5rem); border: 1px solid oklch(0.68 0.12 80 / 25%); background: white; box-shadow: 0 1rem 2.5rem oklch(0.19 0.055 163 / 8%); }.rsvp-form { display: grid; gap: 1.5rem; }.rsvp-form label { display: grid; gap: .45rem; color: oklch(0.29 0.09 163 / 68%); font-family: var(--font-display); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }.rsvp-form input, .rsvp-form select { width: 100%; border: 0; border-bottom: 1px solid oklch(0.29 0.09 163 / 22%); border-radius: 0; background: transparent; color: var(--emerald-950); font-family: var(--font-body); font-size: 1.25rem; letter-spacing: 0; outline: none; padding: .55rem 0; }.rsvp-form input:focus, .rsvp-form select:focus { border-bottom-color: var(--gold-600); }.rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }.rsvp-success { padding: 2rem 0; text-align: center; }.rsvp-success > span { color: var(--gold-600); font-size: 2rem; }.rsvp-success h3 { margin: 1rem 0 .4rem; color: var(--emerald-950); font-family: var(--font-display); font-size: 1.7rem; font-weight: 500; }.rsvp-success p { margin: 0; color: oklch(0.29 0.09 163 / 70%); font-size: 1.1rem; }
 .invitation-footer { position: relative; z-index: 2; padding: 1rem 2rem 4rem; text-align: center; }.footer-script { color: var(--gold-600); font-size: 2.8rem; }.footer-quote { max-width: 29rem; margin: 1rem auto 3rem; color: oklch(0.29 0.09 163 / 70%); font-size: 1.2rem; font-style: italic; line-height: 1.5; }.family-grid { display: grid; white-space: pre-line; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }.family-grid div { display: flex; flex-direction: column; gap: .25rem; }.family-grid span { color: var(--gold-600); font-family: var(--font-display); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; }.family-grid strong { color: var(--emerald-950); font-family: var(--font-display); font-size: 1rem; }.family-grid small { color: oklch(0.29 0.09 163 / 57%); font-size: .9rem; }.footer-mark { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid oklch(0.68 0.12 80 / 24%); color: var(--gold-600); font-family: var(--font-display); font-size: .72rem; letter-spacing: .25em; text-transform: uppercase; }
 

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, Music, VolumeX, Clock3, ArrowUpRight, Compass, Heart, MapPin, Moon, Sparkles, Star } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
 import { weddingConfig } from "@/config/wedding";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/invite/a7K9xP4mQ2L8")({
 
 const weddingDate = new Date(weddingConfig.date.iso);
 const moments = weddingConfig.moments;
+
 
 function CelebrationBurst({ trigger }: { trigger: number }) {
   useEffect(() => {
@@ -213,6 +215,9 @@ function Index() {
   const [celebrationKey, setCelebrationKey] = useState(0);
   const [now, setNow] = useState<Date | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rsvpError, setRsvpError] = useState<string | null>(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -220,6 +225,15 @@ function Index() {
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
+  
+  useEffect(() => {
+    const hasSubmitted = localStorage.getItem("wedding_rsvp_submitted") === "true";
+
+    if (hasSubmitted) {
+      setAlreadySubmitted(true);
+    }
+  }, []);
+
 
   useEffect(() => {
     const revealableSections = document.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -253,9 +267,51 @@ function Index() {
 
   const celebrateReveal = useCallback(() => setCelebrationKey((key) => key + 1), []);
 
-  const submitRsvp = (event: FormEvent<HTMLFormElement>) => {
+  const submitRsvp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setRsvpError(null);
+
+    try {
+      const formData = new FormData(event.currentTarget);
+
+      const name = String(formData.get("name") ?? "").trim();
+      const guests = Number(formData.get("guests") ?? 1);
+      const attendance = String(formData.get("attendance") ?? "");
+      console.log("RSVP payload:", {
+        name,
+        guests,
+        attendance,
+      });
+
+      const { error } = await supabase
+        .from("wedding_rsvps")
+        .insert({
+          name,
+          guests,
+          attendance,
+        });
+
+      if (error) {
+        console.error("RSVP submission failed:", error);
+        setRsvpError(`Couldn't save your RSVP: ${error.message}`);
+        return;
+      }
+
+      setSubmitted(true);
+      localStorage.setItem("wedding_rsvp_submitted", "true");
+    } catch (error) {
+      console.error("RSVP error:", error);
+
+      setRsvpError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while saving your RSVP."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleMusic = async () => {
@@ -483,11 +539,22 @@ function Index() {
         <section className="rsvp-section reveal-section" data-reveal aria-labelledby="rsvp-title">
           <div className="rsvp-card">
             <div className="section-heading"><p className="eyebrow eyebrow--gold">{weddingConfig.rsvp.eyebrow}</p><h2 id="rsvp-title">{weddingConfig.rsvp.title}</h2><p>{weddingConfig.rsvp.intro}</p></div>
-            {submitted ? <div className="rsvp-success" role="status"><span>✦</span><h3>{weddingConfig.rsvp.successTitle}</h3><p>{weddingConfig.rsvp.successMessage}</p></div> : (
+            {submitted || alreadySubmitted ? (<div className="rsvp-success" role="status"><span>✦</span><h3>{weddingConfig.rsvp.successTitle}</h3><p>{weddingConfig.rsvp.successMessage}</p></div>) : (
               <form onSubmit={submitRsvp} className="rsvp-form">
                 <label>{weddingConfig.rsvp.nameLabel}<input name="name" required placeholder={weddingConfig.rsvp.namePlaceholder} /></label>
                 <div className="rsvp-grid"><label>{weddingConfig.rsvp.guestsLabel}<select name="guests" defaultValue="1">{weddingConfig.rsvp.guestOptions.map((option, index) => <option value={String(index + 1)} key={option}>{option}</option>)}</select></label><label>{weddingConfig.rsvp.attendanceLabel}<select name="attendance" defaultValue="joyfully-accept"><option value="joyfully-accept">{weddingConfig.rsvp.attendanceOptions.accept}</option><option value="regretfully-decline">{weddingConfig.rsvp.attendanceOptions.decline}</option></select></label></div>
-                <Button className="button-emerald" type="submit">{weddingConfig.rsvp.submit}</Button>
+                {rsvpError && (
+                  <p className="rsvp-error" role="alert">
+                    {rsvpError}
+                  </p>
+                )}
+                <Button
+                  className="button-emerald"
+                  type="submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Saving..." : weddingConfig.rsvp.submit}
+                </Button>
               </form>
             )}
           </div>

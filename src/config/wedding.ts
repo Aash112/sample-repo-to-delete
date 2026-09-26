@@ -118,7 +118,7 @@ export const weddingConfig = {
     namePlaceholder: "Your name",
     guestsLabel: "Guests",
     attendanceLabel: "Attendance",
-    guestOptions: ["1 guest", "2 guests", "3 guests"],
+    guestOptions: ["1 guest", "2 guests", "3 guests", "4 guests", "5+ guests"],
     submit: "Confirm attendance",
     attendanceOptions: { accept: "Joyfully accept", decline: "Regretfully decline" },
     successTitle: "Thank you for letting us know.",
