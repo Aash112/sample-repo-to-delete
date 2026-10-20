@@ -37,3 +37,6 @@ dist-ssr
 !.env.example
 
 .vercel
+
+# Raw art for the premium redesign (compressed copies go in public/)
+art/

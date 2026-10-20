@@ -68,6 +68,9 @@
   --font-display: "Playfair Display", serif;
   --font-body: "Cormorant Garamond", serif;
   --font-script: "Great Vibes", cursive;
+  --font-arabic: "Aref Ruqaa", "Amiri", serif;
+  --font-title: "Italiana", serif;
+  --font-names: "Pinyon Script", cursive;
 }
 
 :root {
@@ -273,7 +276,7 @@
 .floral-corner--top { top: 1rem; right: 1.5rem; transform: rotate(20deg); }
 .floral-corner--bottom { bottom: 1.5rem; left: 1.5rem; transform: rotate(200deg); }
 .invitation-hero { position: relative; z-index: 2; padding: 5rem 2rem 4rem; text-align: center; }
-.arabic-mark { margin-bottom: .6rem; color: var(--gold-600); font-size: 1.8rem; font-style: italic; }
+.arabic-mark { margin-bottom: .6rem; color: var(--gold-600); font-family: var(--font-arabic); font-size: 2.1rem; line-height: 1.6; direction: rtl; }
 .hero-rule { display: flex; align-items: center; gap: .75rem; width: min(100%, 18rem); margin: 1.5rem auto; color: var(--gold-500); }
 .hero-rule::before, .hero-rule::after { content: ""; height: 1px; flex: 1; background: oklch(0.68 0.12 80 / 38%); }
 .hero-rule span { font-size: .75rem; }
@@ -413,13 +416,13 @@
   color: #b42318;
   font-size: 0.9rem;
 }
-.rsvp-section { position: relative; z-index: 2; padding: 5rem 1.5rem; }.rsvp-card { max-width: 42rem; margin: auto; padding: clamp(2rem, 6vw, 4.5rem); border: 1px solid oklch(0.68 0.12 80 / 25%); background: white; box-shadow: 0 1rem 2.5rem oklch(0.19 0.055 163 / 8%); }.rsvp-form { display: grid; gap: 1.5rem; }.rsvp-form label { display: grid; gap: .45rem; color: oklch(0.29 0.09 163 / 68%); font-family: var(--font-display); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }.rsvp-form input, .rsvp-form select { width: 100%; border: 0; border-bottom: 1px solid oklch(0.29 0.09 163 / 22%); border-radius: 0; background: transparent; color: var(--emerald-950); font-family: var(--font-body); font-size: 1.25rem; letter-spacing: 0; outline: none; padding: .55rem 0; }.rsvp-form input:focus, .rsvp-form select:focus { border-bottom-color: var(--gold-600); }.rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }.rsvp-success { padding: 2rem 0; text-align: center; }.rsvp-success > span { color: var(--gold-600); font-size: 2rem; }.rsvp-success h3 { margin: 1rem 0 .4rem; color: var(--emerald-950); font-family: var(--font-display); font-size: 1.7rem; font-weight: 500; }.rsvp-success p { margin: 0; color: oklch(0.29 0.09 163 / 70%); font-size: 1.1rem; }
+.rsvp-section { position: relative; z-index: 2; padding: 5rem 1.5rem; }.rsvp-card { max-width: 42rem; margin: auto; padding: clamp(2rem, 6vw, 4.5rem); border: 1px solid oklch(0.68 0.12 80 / 25%); background: white; box-shadow: 0 1rem 2.5rem oklch(0.19 0.055 163 / 8%); }.rsvp-form { display: grid; gap: 1.5rem; }.rsvp-form label { display: grid; gap: .45rem; color: oklch(0.29 0.09 163 / 68%); font-family: var(--font-display); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }.rsvp-form input, .rsvp-form select { width: 100%; border: 0; border-bottom: 1px solid oklch(0.29 0.09 163 / 22%); border-radius: 0; background: transparent; color: var(--emerald-950); font-family: var(--font-body); font-size: 1.25rem; letter-spacing: 0; outline: none; padding: .55rem 0; }.rsvp-form input:focus, .rsvp-form select:focus { border-bottom-color: var(--gold-600); }.rsvp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }.rsvp-grid > :only-child { grid-column: 1 / -1; }.rsvp-success { padding: 2rem 0; text-align: center; }.rsvp-success > span { color: var(--gold-600); font-size: 2rem; }.rsvp-success h3 { margin: 1rem 0 .4rem; color: var(--emerald-950); font-family: var(--font-display); font-size: 1.7rem; font-weight: 500; }.rsvp-success p { margin: 0; color: oklch(0.29 0.09 163 / 70%); font-size: 1.1rem; }
 .invitation-footer { position: relative; z-index: 2; padding: 1rem 2rem 4rem; text-align: center; }.footer-script { color: var(--gold-600); font-size: 2.8rem; }.footer-quote { max-width: 29rem; margin: 1rem auto 3rem; color: oklch(0.29 0.09 163 / 70%); font-size: 1.2rem; font-style: italic; line-height: 1.5; }.family-grid { display: grid; white-space: pre-line; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }.family-grid div { display: flex; flex-direction: column; gap: .25rem; }.family-grid span { color: var(--gold-600); font-family: var(--font-display); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; }.family-grid strong { color: var(--emerald-950); font-family: var(--font-display); font-size: 1rem; }.family-grid small { color: oklch(0.29 0.09 163 / 57%); font-size: .9rem; }.footer-mark { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid oklch(0.68 0.12 80 / 24%); color: var(--gold-600); font-family: var(--font-display); font-size: .72rem; letter-spacing: .25em; text-transform: uppercase; }
 
 /* Creative celebration layer */
 .hero-rule { display:flex; align-items:center; justify-content:center; gap:.85rem; margin:1.15rem auto 1.35rem; color:var(--gold-500); }
 .hero-rule span { font-size:.62rem; }
-.hero-rule i { color:var(--emerald-900); font-family:var(--font-body); font-size:.95rem; font-style:normal; letter-spacing:.08em; }
+.hero-rule i { color:var(--emerald-900); font-family:var(--font-arabic); font-size:1.15rem; font-style:normal; }
 .hero-signature { display:flex; align-items:center; justify-content:center; gap:.55rem; margin:.8rem auto 0; color:var(--gold-600); font-family:var(--font-display); font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; }
 .hero-signature svg { width:.8rem; height:.8rem; }
 
@@ -1008,7 +1011,7 @@
     height: 0.95rem;
   }
   .arabic-mark {
-    font-size: 1.35rem;
+    font-size: 1.6rem;
   }
 
   .couple-names {

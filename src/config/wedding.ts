@@ -82,7 +82,10 @@ export const weddingConfig = {
       number: "01",
       name: "Nikkah Ceremony",
       date: "December 30, 2026",
+      weekday: "Wednesday",
       time: "12:30 PM – 1:30 PM",
+      startIso: "2026-12-30T12:30:00+05:30",
+      endIso: "2026-12-30T13:30:00+05:30",
       location: "UAE Community Hall",
       description: "The Nikkah and formal union of two souls, surrounded by the prayers and blessings of our loved ones.",
     },
@@ -142,9 +145,80 @@ footer: {
   thanksName: "A. Azmiya · S. Fahima Azeez · \nS. Farha · S. Fathima",
   thanksNote: "“Together in every moment, celebrating this beautiful beginning.”",
 },
+  // Labels and hints for the Noor design's interactions.
+  noor: {
+    gate: {
+      eyebrow: "You are invited to the Nikkah of",
+      hint: "Press and hold the seal to open",
+      hintKeyboard: "Press Enter to open",
+    },
+    hero: {
+      lanternHint: "Tap the lanterns",
+      scroll: "Scroll",
+    },
+    date: {
+      eyebrow: "Save the date",
+      title: "The day we wed",
+      dayLabel: "Wednesday",
+      day: "30",
+      monthYear: "December 2026",
+    },
+    story: {
+      next: "Turn the page",
+      again: "Read again",
+      swipeHint: "Swipe or tap to turn",
+    },
+    countdown: {
+      eyebrow: "Counting every moment",
+      title: "Light the lanterns",
+      hint: "Tap each lantern to light it",
+      done: "Every second brings us closer.",
+      labels: { days: "Days", hours: "Hours", minutes: "Minutes", seconds: "Seconds" },
+    },
+    nikah: {
+      eyebrow: "The Nikkah",
+      calendar: "Add to calendar",
+      google: "Google Calendar",
+      apple: "Apple / Outlook (.ics)",
+    },
+    venue: {
+      title: "Find your way to us",
+      showWay: "Show me the way",
+      copy: "Copy address",
+      copied: "Address copied",
+    },
+    rsvp: {
+      sealing: "Sealing your reply…",
+      guestsLabel: "How many of you?",
+      fewer: "One fewer guest",
+      more: "One more guest",
+      messageLabel: "A wish for the couple (optional)",
+      messagePlaceholder: "May Allah bless your home with love and mercy…",
+      maxMessage: 280,
+    },
+    footer: {
+      crescentHint: "Tap the moon",
+    },
+  },
+
+  share: {
+    label: "Share invitation",
+    message: "You're invited to the Nikkah of Al-Ryan & Faseeha · December 30, 2026",
+  },
+
+  brand: {
+    name: "InviteNest",
+    credit: "Crafted with InviteNest",
+    cta: "Make yours",
+    url: "https://invitenest.cc/?utm_source=alryan-faseeha&utm_medium=invite&utm_campaign=footer",
+  },
+
   seo: {
     title: "Al-Ryan & Faseeha — Wedding Invitation",
     description: "A royal Muslim wedding invitation for Al-Ryan and Faseeha, with ceremony details, RSVP, and directions.",
     ogDescription: "Join Al-Ryan and Faseeha as they celebrate their wedding with family and friends.",
+    // Full public address of the site, no trailing slash. Social previews need absolute image URLs.
+    siteUrl: "",
+    shareImage: "/images/noor/share.jpg",
   },
 } as const;
