@@ -197,7 +197,8 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 .noor-hero__lantern { position: absolute; z-index: 5; top: 0; --w: clamp(56px, 13vw, 96px); }
 .noor-hero__lantern--left { left: max(3vw, calc(50% - 46vh)); --chain: clamp(8px, 4vh, 60px); --sway: 6.5s; }
 .noor-hero__lantern--right { right: max(3vw, calc(50% - 46vh)); --chain: clamp(30px, 10vh, 120px); --sway: 5.6s; --sway-delay: -2s; }
-.noor-hero__hint { position: absolute; z-index: 5; top: calc(clamp(30px, 10vh, 120px) + clamp(56px, 13vw, 96px) * 2 + 0.4rem); right: max(3vw, calc(50% - 46vh)); width: clamp(56px, 13vw, 96px); margin: 0; color: #f6e3a4; font: italic 500 0.82rem/1.2 var(--f-body); text-align: center; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 0, 0, 0.7); animation: noor-fade-pulse 2.4s ease-in-out infinite; pointer-events: none; }
+/* the "tap the lanterns" hint hangs under the left lantern (its chain is the shorter one) */
+.noor-hero__hint { position: absolute; z-index: 5; top: calc(clamp(8px, 4vh, 60px) + clamp(56px, 13vw, 96px) * 2 + 0.4rem); left: max(3vw, calc(50% - 46vh)); width: clamp(56px, 13vw, 96px); margin: 0; color: #f6e3a4; font: italic 500 0.82rem/1.2 var(--f-body); text-align: center; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 0, 0, 0.7); animation: noor-fade-pulse 2.4s ease-in-out infinite; pointer-events: none; }
 @keyframes noor-fade-pulse { 50% { opacity: 0.6; } }
 /* fireflies + shooting stars (HeroSky): above the arch, under the garland and the hanging lanterns */
 .noor-hero__sky-fx { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 2s ease 0.8s; }
