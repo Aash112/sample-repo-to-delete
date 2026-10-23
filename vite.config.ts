@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [
     tanstackStart({
       srcDirectory: "src",
-      serverEntry: "server",
+      server: { entry: "server" },
     }),
     nitro(),
     viteReact(),

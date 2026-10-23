@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as InviteA7K9xP4mQ2L8RouteImport } from './routes/invite/a7K9xP4mQ2L8'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteA7K9xP4mQ2L8Route = InviteA7K9xP4mQ2L8RouteImport.update({
   id: '/invite/a7K9xP4mQ2L8',
   path: '/invite/a7K9xP4mQ2L8',
@@ -18,29 +24,40 @@ const InviteA7K9xP4mQ2L8Route = InviteA7K9xP4mQ2L8RouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/invite/a7K9xP4mQ2L8': typeof InviteA7K9xP4mQ2L8Route
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/invite/a7K9xP4mQ2L8': typeof InviteA7K9xP4mQ2L8Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/invite/a7K9xP4mQ2L8': typeof InviteA7K9xP4mQ2L8Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/invite/a7K9xP4mQ2L8'
+  fullPaths: '/' | '/invite/a7K9xP4mQ2L8'
   fileRoutesByTo: FileRoutesByTo
-  to: '/invite/a7K9xP4mQ2L8'
-  id: '__root__' | '/invite/a7K9xP4mQ2L8'
+  to: '/' | '/invite/a7K9xP4mQ2L8'
+  id: '__root__' | '/' | '/invite/a7K9xP4mQ2L8'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   InviteA7K9xP4mQ2L8Route: typeof InviteA7K9xP4mQ2L8Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/a7K9xP4mQ2L8': {
       id: '/invite/a7K9xP4mQ2L8'
       path: '/invite/a7K9xP4mQ2L8'
@@ -52,6 +69,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   InviteA7K9xP4mQ2L8Route: InviteA7K9xP4mQ2L8Route,
 }
 export const routeTree = rootRouteImport
