@@ -29,6 +29,9 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
   const [gone, setGone] = useState(false);
 
   useEffect(() => {
+    // every visit starts at the top, behind the gate (the browser would otherwise restore the last position)
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
     document.documentElement.classList.add("noor-locked");
     return () => document.documentElement.classList.remove("noor-locked");
   }, []);
@@ -38,6 +41,7 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
   };
 
   const finish = () => {
+    window.scrollTo(0, 0);
     document.documentElement.classList.remove("noor-locked");
     setGone(true);
     onOpened();
@@ -63,6 +67,11 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
     const { gsap } = await loadMotion();
     const q = gsap.utils.selector(el);
     const seal = q(".noor-gate__seal")[0]?.getBoundingClientRect();
+    // How far the camera has to push so the doorway (and the open doors on its hinges) clears every screen edge.
+    const stage = q(".noor-gate__stage")[0]?.getBoundingClientRect();
+    const through = stage
+      ? Math.max(window.innerWidth / stage.width, window.innerHeight / stage.height) * 2.4
+      : 8;
     gsap.timeline({ onComplete: finish })
       // the seal pops and falls away
       .to(q(".noor-gate__seal"), { scale: 1.15, duration: 0.16, ease: "power2.out" })
@@ -71,16 +80,14 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
       .to(q(".noor-gate__intro, .noor-gate__hint, .noor-gate__motes"), { opacity: 0, y: -10, duration: 0.4, stagger: 0.05 }, "<")
       // the doors swing open onto the hero, which starts its entrance behind them
       .add(() => { el.classList.add("is-opening"); onReveal(); playSfx("doors", 0.6); }, "-=0.15")
-      .to(q(".noor-gate__door--left"), { rotateY: -108, duration: 1.7, ease: "power2.inOut" }, "<")
-      .to(q(".noor-gate__door--right"), { rotateY: 108, duration: 1.7, ease: "power2.inOut" }, "<")
+      // the doors keep swinging (stopping short of edge-on, so they never vanish) for the whole walk-through
+      .to(q(".noor-gate__door--left"), { rotateY: -82, duration: 2.3, ease: "power2.inOut" }, "<")
+      .to(q(".noor-gate__door--right"), { rotateY: 82, duration: 2.3, ease: "power2.inOut" }, "<")
       .add(() => petalDrizzle(5, 2), "<0.6")
-      // then walk through: the doorway (and the wall around it) grows past the screen edges
-      .add(() => el.classList.add("is-through"), "<0.4")
-      .to(q(".noor-gate__lanterns"), { opacity: 0, y: -40, duration: 0.6, ease: "power1.in" }, "<")
-      .to(q(".noor-gate__stage"), { scale: 3.4, duration: 1.2, ease: "power2.in" }, "<")
-      // the wall dissolves as you pass through, so its edge never reads as a frame around the hero
-      .to(q(".noor-gate__wall"), { opacity: 0, duration: 0.7, ease: "sine.inOut" }, "<0.1")
-      .to(q(".noor-gate__stage"), { opacity: 0, duration: 0.4, ease: "power1.in" }, "-=0.4");
+      // then walk through: no fades — the camera pushes until the doors and the wall have left every screen edge
+      .add(() => el.classList.add("is-through"), "<0.7")
+      .to(q(".noor-gate__lanterns"), { yPercent: -110, duration: 1.1, ease: "power2.in" }, "<")
+      .to(q(".noor-gate__stage"), { scale: through, duration: 1.6, ease: "power3.in" }, "<");
   };
 
   const tick = () => {

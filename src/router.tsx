@@ -8,7 +8,8 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
-    scrollRestoration: true,
+    // the invitation always starts at its gate: never restore an earlier scroll position on reload
+    scrollRestoration: false,
     defaultPreloadStaleTime: 0,
   });
 

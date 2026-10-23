@@ -43,7 +43,9 @@ export function Nikah() {
     if (!el) return;
     if (prefersReducedMotion()) { el.classList.add("is-lit"); return; }
     let kill = () => {};
+    let cancelled = false;
     void loadMotion().then(({ gsap }) => {
+      if (cancelled) return; // unmounted before GSAP loaded: never leave a stray copy of these animations
       const ctx = gsap.context(() => {
         // the hall brightens with the scroll, so it never looks stuck in the dark
         gsap.fromTo(".noor-stage__photo", { filter: "brightness(0.66) saturate(0.75)" }, {
@@ -55,12 +57,12 @@ export function Nikah() {
           .fromTo(".noor-stage__garland", { yPercent: -120 }, { yPercent: 0, duration: 1.1, ease: "bounce.out" })
           .to(".noor-stage__lamp", { opacity: 1, scale: 1, duration: 0.8, stagger: 0.25, ease: "power2.out" }, "<0.3")
           .add(() => playSfx("light", 0.4), "<")
-          .from(".noor-stage__text > *", { y: 24, opacity: 0, duration: 0.7, stagger: 0.1, ease: "power3.out" }, "<0.1")
-          .from(".noor-nikah__below > *", { y: 20, opacity: 0, duration: 0.6, stagger: 0.1, ease: "power3.out" }, "<0.3");
+          .fromTo(".noor-stage__text > *", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }, "<0.1")
+          .fromTo(".noor-nikah__below > *", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" }, "<0.3");
       }, el);
       kill = () => ctx.revert();
     });
-    return () => kill();
+    return () => { cancelled = true; kill(); };
   }, []);
 
   return (

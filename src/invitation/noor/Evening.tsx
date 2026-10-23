@@ -17,7 +17,9 @@ export function Evening() {
     const el = root.current;
     if (!el || prefersReducedMotion()) return;
     let kill = () => {};
+    let cancelled = false;
     void loadMotion().then(({ gsap }) => {
+      if (cancelled) return; // unmounted before GSAP loaded: never leave a stray copy of these animations
       const ctx = gsap.context(() => {
         const t = { trigger: el, start: "top bottom", end: "top -30%", scrub: true };
         gsap.fromTo(".noor-evening__dusk", { opacity: 1 }, { opacity: 0, ease: "none", scrollTrigger: t });
@@ -27,7 +29,7 @@ export function Evening() {
       }, el);
       kill = () => ctx.revert();
     });
-    return () => kill();
+    return () => { cancelled = true; kill(); };
   }, []);
 
   return (

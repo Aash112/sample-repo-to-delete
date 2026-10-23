@@ -42,11 +42,13 @@ export function Venue() {
     const el = root.current?.querySelector(".noor-map");
     if (!el) return;
     let kill = () => {};
+    let cancelled = false;
     void loadMotion().then(({ ScrollTrigger }) => {
+      if (cancelled) return; // unmounted before GSAP loaded: never leave a stray copy of these animations
       const st = ScrollTrigger.create({ trigger: el, start: "top 65%", once: true, onEnter: () => void draw() });
       kill = () => st.kill();
     });
-    return () => kill();
+    return () => { cancelled = true; kill(); };
   }, []);
 
   const copy = async () => {

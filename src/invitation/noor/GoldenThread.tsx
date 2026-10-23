@@ -2,11 +2,12 @@ import { useEffect, useRef } from "react";
 import { loadMotion } from "./motion";
 import { prefersReducedMotion } from "./sound";
 
-const NODE_R = 9;
+const BEND_R = 9;
 
 /**
- * Two gold threads down the paper's side margins that draw with the scroll (a spark at each tip), bulging
- * around a diamond node at every section, which lights up when the thread reaches it. Lives behind content
+ * Two gold threads down the paper's side margins that draw with the scroll (a spark at each tip), bending
+ * inward in a small arc at every section around a diamond that sits in the arc's hollow (an even gap all round)
+ * and lights up when the thread reaches it. Lives behind content
  * and only in the margins, so it never crosses text.
  */
 export function GoldenThread() {
@@ -25,6 +26,7 @@ export function GoldenThread() {
     let total = 0;
     let nodes: { y: number; els: SVGElement[] }[] = [];
     let kill = () => {};
+    let cancelled = false;
     const still = prefersReducedMotion();
 
     const sideX = (w: number) => (w < 760 ? 7 : Math.max(22, (w - 1120) / 2 - 36));
@@ -37,8 +39,8 @@ export function GoldenThread() {
       const ys = [...paper.querySelectorAll<HTMLElement>(":scope > section")].slice(1)
         .map((s) => s.getBoundingClientRect().top - top + 6);
       const x = sideX(w);
-      const r = w < 760 ? 6 : NODE_R;
-      // one path per side; each bulges inward (toward the content) around every node
+      const r = w < 760 ? 6 : BEND_R;
+      // one path per side; each bends inward (toward the content) at every section
       const make = (side: number, inward: number) => {
         let d = `M${side} 0`;
         for (const y of ys) d += ` L${side} ${y - r} A${r} ${r} 0 0 ${inward > 0 ? 1 : 0} ${side} ${y + r}`;
@@ -54,12 +56,14 @@ export function GoldenThread() {
       for (let len = 0; len <= total; len += 6) table.push({ y: probe.getPointAtLength(len).y, len });
       table.push({ y: h, len: total });
       for (const p of [...lines, ...glows]) { p.style.strokeDasharray = `${total}`; p.style.strokeDashoffset = still ? "0" : `${total}`; }
+      // the diamond is centred on the arc's centre and sized to leave the same gap to the arc on every side
+      const size = r * 0.78;
       nodeLayer.replaceChildren();
       nodes = ys.map((y) => {
-        const els = [x + r, w - x - r].map((cx) => {
+        const els = [x, w - x].map((cx) => {
           const n = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          n.setAttribute("x", String(cx - 4)); n.setAttribute("y", String(y - 4));
-          n.setAttribute("width", "8"); n.setAttribute("height", "8");
+          n.setAttribute("x", String(cx - size / 2)); n.setAttribute("y", String(y - size / 2));
+          n.setAttribute("width", String(size)); n.setAttribute("height", String(size));
           n.setAttribute("transform", `rotate(45 ${cx} ${y})`);
           n.setAttribute("class", `noor-thread__node${still ? " is-lit" : ""}`);
           nodeLayer.appendChild(n);
@@ -82,22 +86,23 @@ export function GoldenThread() {
       const tipY = window.innerHeight * 0.72 - paper.getBoundingClientRect().top;
       const len = Math.min(total, lengthAt(tipY));
       for (const p of [...lines, ...glows]) p.style.strokeDashoffset = String(total - len);
+      for (const n of nodes) n.els.forEach((el) => el.classList.toggle("is-lit", tipY > n.y));
       sparks.forEach((spark, i) => {
         const pt = (lines[i] ?? lines[0]!).getPointAtLength(len);
         spark.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
         spark.style.opacity = len > 4 && len < total - 4 ? "1" : "0";
       });
-      for (const n of nodes) n.els.forEach((el) => el.classList.toggle("is-lit", tipY > n.y));
     };
 
     build();
     const observer = new ResizeObserver(() => build());
     observer.observe(paper);
     void loadMotion().then(({ ScrollTrigger }) => {
+      if (cancelled) return; // unmounted before GSAP loaded: never leave a stray copy of these animations
       const st = ScrollTrigger.create({ trigger: paper, start: "top bottom", end: "bottom top", onUpdate: draw, onRefresh: build });
       kill = () => st.kill();
     });
-    return () => { observer.disconnect(); kill(); };
+    return () => { cancelled = true; observer.disconnect(); kill(); };
   }, []);
 
   return (
