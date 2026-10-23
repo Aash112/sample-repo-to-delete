@@ -456,6 +456,14 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 @keyframes noor-bars { 50% { scale: 1 0.3; } }
 
 /* ---------- larger screens ---------- */
+/* phones: the heading, doors and hint are centred together as one block (centring the doors alone left the tall
+   heading crowding the top and an empty band at the bottom); the wall lanterns stay pinned to the top */
+@media (max-width: 759px) {
+  .noor-gate { grid-template-rows: 1fr auto auto auto 1fr; }
+  .noor-gate__intro { grid-row: 2; }
+  .noor-gate__stage { grid-row: 3; }
+  .noor-gate__hint { grid-row: 4; }
+}
 @media (min-width: 760px) {
   .noor-map { width: 100%; margin-inline: 0; border-radius: 22px; box-shadow: 0 30px 60px -28px rgba(15, 46, 32, 0.6), 0 0 0 1px rgba(201, 162, 74, 0.45); }
   .noor-footer__families { grid-template-columns: repeat(3, 1fr); }
