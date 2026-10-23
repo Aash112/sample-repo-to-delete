@@ -39,10 +39,18 @@ function ensureCanvas() {
   };
   resize();
   window.addEventListener("resize", resize);
+  preloadPetals();
+}
+
+/** Fetch and decode the petal images ahead of time (the gate calls this while it waits for the hold), so the
+    first burst doesn't decode sixteen images on the main thread mid-animation. */
+export function preloadPetals() {
+  if (images.length || typeof document === "undefined") return;
   for (let i = 1; i <= PETAL_COUNT; i++) {
     const img = new Image();
     img.decoding = "async";
     img.src = `/images/noor/petals/${i}.webp`;
+    void img.decode?.().catch(() => {});
     images.push(img);
   }
 }

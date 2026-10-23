@@ -79,6 +79,18 @@ export function NoorInvitation() {
     return () => observer.disconnect();
   }, [opened]);
 
+  // Looping decorations only run where they can be seen: off-screen sections are marked idle and their CSS
+  // animations pause (about 70 of them would otherwise be restyled every frame, the footer's stars included).
+  useEffect(() => {
+    // a class, not html:has(.noor): :has made every DOM change (the countdown's ticking digits) restyle the page
+    document.documentElement.classList.add("noor-site");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.toggleAttribute("data-idle", !entry.isIntersecting));
+    }, { rootMargin: "120px 0px" });
+    document.querySelectorAll(".noor-hero, .noor-paper > section, .noor-thread, .noor-evening, .noor-footer").forEach((el) => observer.observe(el));
+    return () => { observer.disconnect(); document.documentElement.classList.remove("noor-site"); };
+  }, []);
+
   useEffect(() => () => window.clearInterval(fade.current), []);
 
   return (

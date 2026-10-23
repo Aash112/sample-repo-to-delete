@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { weddingConfig } from "@/config/wedding";
-import { img, loadMotion } from "./motion";
-import { petalBurst, petalDrizzle } from "./petals";
+import { ease, img } from "./motion";
+import { petalBurst, petalDrizzle, preloadPetals } from "./petals";
 import { buzz, playSfx, prefersReducedMotion, unlockSound } from "./sound";
 
 const HOLD_MS = 1100;
@@ -33,7 +33,9 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
     document.documentElement.classList.add("noor-locked");
-    return () => document.documentElement.classList.remove("noor-locked");
+    // decode the petals while the guest reads the gate, not during the first burst
+    const idle = window.setTimeout(preloadPetals, 1200);
+    return () => { window.clearTimeout(idle); document.documentElement.classList.remove("noor-locked"); };
   }, []);
 
   const setProgress = (value: number) => {
@@ -47,7 +49,7 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
     onOpened();
   };
 
-  const open = async () => {
+  const open = () => {
     if (done.current) return;
     done.current = true;
     cancelAnimationFrame(raf.current);
@@ -64,36 +66,44 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
       window.setTimeout(finish, 600);
       return;
     }
-    const { gsap } = await loadMotion();
-    const q = gsap.utils.selector(el);
+    // Web Animations, not a GSAP timeline: they run on the compositor, so the work that lands mid-opening (the
+    // hero's entrance, React commits, petal and audio decoding) can't make the doors stutter on phones.
+    const q = (selector: string) => [...el.querySelectorAll<HTMLElement>(selector)];
+    const play = (selector: string, keyframes: Keyframe[], at: number, duration: number, easing: string) =>
+      q(selector).map((node) => node.animate(keyframes, { delay: at * 1000, duration: duration * 1000, easing, fill: "both" }));
+    const later = (at: number, fn: () => void) => window.setTimeout(fn, at * 1000);
     const seal = q(".noor-gate__seal")[0]?.getBoundingClientRect();
     // How far the camera has to push so the doorway (and the open doors on its hinges) clears every screen edge.
     const stage = q(".noor-gate__stage")[0]?.getBoundingClientRect();
     const through = stage
       ? Math.max(window.innerWidth / stage.width, window.innerHeight / stage.height) * 2.4
       : 8;
-    gsap.timeline({ onComplete: finish })
-      // the seal pops and falls away
-      .to(q(".noor-gate__seal"), { scale: 1.15, duration: 0.16, ease: "power2.out" })
-      .to(q(".noor-gate__seal"), { scale: 0.5, rotate: 28, y: 120, opacity: 0, duration: 0.55, ease: "power2.in" })
-      .add(() => { if (seal) petalBurst(seal.left + seal.width / 2, seal.top + seal.height / 2, 22); }, "<")
-      .to(q(".noor-gate__intro, .noor-gate__hint, .noor-gate__motes"), { opacity: 0, y: -10, duration: 0.4, stagger: 0.05 }, "<")
-      // the doors swing open onto the hero, which starts its entrance behind them
-      .add(() => { el.classList.add("is-opening"); onReveal(); playSfx("doors", 0.6); }, "-=0.15")
-      // the doors keep swinging (stopping short of edge-on, so they never vanish) for the whole walk-through
-      .to(q(".noor-gate__door--left"), { rotateY: -82, duration: 2.3, ease: "power2.inOut" }, "<")
-      .to(q(".noor-gate__door--right"), { rotateY: 82, duration: 2.3, ease: "power2.inOut" }, "<")
-      .add(() => petalDrizzle(5, 2), "<0.6")
-      // then walk through: no fades — the camera pushes until the doors and the wall have left every screen edge
-      .add(() => el.classList.add("is-through"), "<0.7")
-      .to(q(".noor-gate__lanterns"), { yPercent: -110, duration: 1.1, ease: "power2.in" }, "<")
-      .to(q(".noor-gate__stage"), { scale: through, duration: 1.6, ease: "power3.in" }, "<");
+    // the seal pops and falls away
+    q(".noor-gate__seal").forEach((node) => node.animate([
+      { transform: "none", easing: ease.outCubic },
+      { transform: "scale(1.15)", opacity: 1, offset: 0.16 / 0.71, easing: ease.inCubic },
+      { transform: "translateY(120px) rotate(28deg) scale(0.5)", opacity: 0 },
+    ], { duration: 710, fill: "forwards" }));
+    later(0.16, () => { if (seal) petalBurst(seal.left + seal.width / 2, seal.top + seal.height / 2, 22); });
+    [".noor-gate__motes", ".noor-gate__intro", ".noor-gate__hint"].forEach((selector, i) =>
+      play(selector, [{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-10px)" }], 0.16 + i * 0.05, 0.4, ease.outQuad));
+    // the doors swing open onto the hero, which starts its entrance behind them
+    later(0.56, () => { el.classList.add("is-opening"); onReveal(); playSfx("doors", 0.6); });
+    // the doors keep swinging (stopping short of edge-on, so they never vanish) for the whole walk-through
+    play(".noor-gate__door--left", [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-82deg)" }], 0.56, 2.3, ease.inOutCubic);
+    play(".noor-gate__door--right", [{ transform: "rotateY(0deg)" }, { transform: "rotateY(82deg)" }], 0.56, 2.3, ease.inOutCubic);
+    later(1.16, () => petalDrizzle(5, 2));
+    // then walk through: no fades — the camera pushes until the doors and the wall have left every screen edge
+    later(1.86, () => el.classList.add("is-through"));
+    play(".noor-gate__lanterns", [{ transform: "none" }, { transform: "translateY(-110%)" }], 1.86, 1.1, ease.inCubic);
+    const walk = play(".noor-gate__stage", [{ transform: "none" }, { transform: `scale(${through})` }], 1.86, 1.6, ease.inQuart)[0];
+    if (walk) void walk.finished.then(finish, finish); else later(3.46, finish);
   };
 
   const tick = () => {
     const value = Math.min(1, (performance.now() - holdStart.current) / HOLD_MS);
     setProgress(value);
-    if (value >= 1) { void open(); return; }
+    if (value >= 1) { open(); return; }
     raf.current = requestAnimationFrame(tick);
   };
 
@@ -125,8 +135,9 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
   return (
     <div ref={root} className="noor-gate" role="dialog" aria-modal="true" aria-label={invitation.envelopeTitle}>
       <div className="noor-gate__lanterns" aria-hidden="true">
-        <img className="noor-gate__wall-lantern noor-gate__wall-lantern--left" src={img("lantern-lit")} alt="" />
-        <img className="noor-gate__wall-lantern noor-gate__wall-lantern--right" src={img("lantern-lit")} alt="" />
+        {/* the glow sits on the image, the sway on its wrapper: the shadow is painted once instead of re-blurred every frame */}
+        <span className="noor-gate__wall-lantern noor-gate__wall-lantern--left"><img src={img("lantern-lit")} alt="" /></span>
+        <span className="noor-gate__wall-lantern noor-gate__wall-lantern--right"><img src={img("lantern-lit")} alt="" /></span>
       </div>
       <div className="noor-gate__motes" aria-hidden="true">{Array.from({ length: 14 }, (_, i) => <i key={i} style={{ "--i": i } as React.CSSProperties} />)}</div>
 
@@ -155,7 +166,7 @@ export function Gate({ onHoldStart, onHoldCancel, onUnseal, onReveal, onOpened }
             onPointerCancel={cancel}
             onContextMenu={(event) => event.preventDefault()}
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); unlockSound(); onHoldStart(); void open(); }
+              if (event.key === "Enter" || event.key === " ") { event.preventDefault(); unlockSound(); onHoldStart(); open(); }
             }}
           >
             <img src={img("seal")} alt="" draggable={false} />

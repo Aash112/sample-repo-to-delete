@@ -2,14 +2,16 @@ import { useEffect, useRef } from "react";
 import { buzz, playSfx, prefersReducedMotion } from "./sound";
 
 // The hero's living night: small gold eight-pointed stars (the wall's own motif) that twinkle, turn and glint,
-// waking up as the pointer passes; the pointer carries a warm light across the carved wall (--mx/--my on the
-// hero); shooting stars now and then, and a tap sends one from that spot with a burst of tiny stars.
+// waking up as the pointer passes; the pointer carries a warm light across the carved wall (the torch);
+// shooting stars now and then, and a tap sends one from that spot with a burst of tiny stars.
 
 type Twinkle = { x: number; y: number; size: number; depth: number; rot: number; spin: number; phase: number; speed: number; wake: number; glint: number };
 type Star = { x: number; y: number; vx: number; vy: number; life: number; max: number; trail: { x: number; y: number }[]; auto: boolean };
 type Spark = { x: number; y: number; vx: number; vy: number; life: number; max: number; r: number; rot: number };
 
 const GOLD = "255, 214, 140";
+/** Half the torch's size: its pool of light is centred on the pointer. */
+const TORCH = 220;
 
 /** An eight-pointed star (two squares, one turned 45°) as a filled path. */
 function starPath(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, rot: number) {
@@ -25,9 +27,11 @@ function starPath(ctx: CanvasRenderingContext2D, x: number, y: number, r: number
 
 export function HeroSky({ active }: { active: boolean }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const torchRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    const torch = torchRef.current;
     const host = canvas?.parentElement;
     // nothing runs until the doors open: the gate and its animation get the whole frame budget
     if (!active || !canvas || !host || prefersReducedMotion()) return;
@@ -63,6 +67,8 @@ export function HeroSky({ active }: { active: boolean }) {
       const rect = host.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       w = rect.width; h = rect.height;
+      torch?.style.setProperty("--w", `${w}px`);
+      torch?.style.setProperty("--h", `${h}px`);
       canvas.width = w * dpr; canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       measureArch();
@@ -196,8 +202,12 @@ export function HeroSky({ active }: { active: boolean }) {
     const onMove = (event: PointerEvent) => {
       const p = local(event);
       Object.assign(pointer, p, { on: true, px: p.x / w - 0.5, py: p.y / h - 0.5 });
-      host.style.setProperty("--mx", `${p.x}px`);
-      host.style.setProperty("--my", `${p.y}px`);
+      // the light moves as two GPU layers (the pool, and the wall pattern inside it held still), not by
+      // repainting a full-screen masked, filtered layer on every touch move
+      if (torch) {
+        torch.style.transform = `translate(${p.x - TORCH}px, ${p.y - TORCH}px)`;
+        (torch.firstElementChild as HTMLElement | null)?.style.setProperty("transform", `translate(${TORCH - p.x}px, ${TORCH - p.y}px)`);
+      }
       host.classList.add("is-lit-by-pointer");
     };
     const onLeave = () => { pointer.on = false; host.classList.remove("is-lit-by-pointer"); };
@@ -220,8 +230,9 @@ export function HeroSky({ active }: { active: boolean }) {
     });
 
     resize();
-    // the arch settles (entrance zoom) and moves with the parallax: keep its box fresh for the clip
-    const archTimer = window.setInterval(measureArch, 500);
+    // the arch settles during the entrance zoom: re-measure its box for the clip once it has (polling it would
+    // force a style and layout pass every time)
+    const archTimers = [1200, 3200].map((ms) => window.setTimeout(measureArch, ms));
     io.observe(host);
     window.addEventListener("resize", resize);
     host.addEventListener("pointermove", onMove);
@@ -230,7 +241,7 @@ export function HeroSky({ active }: { active: boolean }) {
     host.addEventListener("pointerdown", onTap);
     return () => {
       cancelAnimationFrame(frame);
-      window.clearInterval(archTimer);
+      archTimers.forEach((t) => window.clearTimeout(t));
       io.disconnect();
       window.removeEventListener("resize", resize);
       host.removeEventListener("pointermove", onMove);
@@ -242,7 +253,7 @@ export function HeroSky({ active }: { active: boolean }) {
 
   return (
     <>
-      <span className="noor-hero__torch" aria-hidden="true" />
+      <span ref={torchRef} className="noor-hero__torch" aria-hidden="true"><span /></span>
       <canvas ref={canvasRef} className={`noor-hero__sky-fx ${active ? "is-on" : ""}`} aria-hidden="true" />
     </>
   );

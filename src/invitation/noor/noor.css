@@ -28,7 +28,15 @@
 }
 html.noor-locked, html.noor-locked body { overflow: hidden; }
 /* keep the scrollbar's space while the gate locks scrolling, so the hero doesn't jump sideways when it unlocks */
-html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
+html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
+/* looping decorations stop where nobody can see them: sections scrolled off screen (data-idle, set by
+   NoorInvitation) and the hero until the doors open. Removed, not paused: a paused animation still holds its own
+   GPU layer (30 footer stars alone), and every layer adds to each frame's commit. The loops restart unnoticed; the
+   few one-shot pop-ins are only paused, so they never replay. */
+.noor [data-idle], .noor [data-idle] :not(.noor-countdown__digits, .noor-calendar__menu, .noor-map__pin, .noor-rsvp__done-seal),
+.noor [data-idle] *::before, .noor [data-idle] *::after,
+.noor-hero:not(.is-awake) *, .noor-hero:not(.is-awake) *::before, .noor-hero:not(.is-awake) *::after { animation-name: none !important; }
+.noor [data-idle] :is(.noor-countdown__digits, .noor-calendar__menu, .noor-map__pin, .noor-rsvp__done-seal) { animation-play-state: paused !important; }
 /* :where keeps these resets at zero specificity so component classes always win */
 :where(.noor) img { max-width: none; user-select: none; -webkit-user-drag: none; }
 :where(.noor) button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
@@ -96,7 +104,8 @@ html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
 .noor-gate__wall::before { content: ""; position: absolute; inset: 0; opacity: 0.2; background-image: var(--star-tile); background-size: 88px; mask-image: radial-gradient(ellipse 70vw 60vh at 50% 50%, #000 25%, transparent 80%); }
 .noor-gate__wall::after { content: ""; position: absolute; left: 50%; top: 50%; width: min(120vw, 900px); aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; background: radial-gradient(circle, rgba(246, 184, 96, 0.16), transparent 62%); animation: noor-glow 5s ease-in-out infinite; }
 .noor-gate__lanterns { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.noor-gate__wall-lantern { position: absolute; top: 0; width: clamp(54px, 12vw, 92px); filter: drop-shadow(0 0 22px rgba(246, 184, 96, 0.55)); transform-origin: 50% 0; animation: noor-sway 6s ease-in-out infinite; }
+.noor-gate__wall-lantern { position: absolute; top: 0; width: clamp(54px, 12vw, 92px); transform-origin: 50% 0; animation: noor-sway 6s ease-in-out infinite; }
+.noor-gate__wall-lantern img { display: block; width: 100%; filter: drop-shadow(0 0 22px rgba(246, 184, 96, 0.55)); }
 .noor-gate__wall-lantern--left { left: max(4vw, calc(50% - 44vh)); top: -6%; }
 .noor-gate__wall-lantern--right { right: max(4vw, calc(50% - 44vh)); top: -2%; animation-delay: -2.5s; }
 .noor-gate__motes { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
@@ -128,14 +137,18 @@ html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
 .noor-gate__seal img { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5)); pointer-events: none; }
 .noor-gate__mono { position: absolute; left: 51.4cqw; top: 42.7cqw; translate: -50% -50%; color: var(--n-gold-light); font: italic 600 26cqw/1 var(--f-body); white-space: nowrap; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 0 12px rgba(246, 184, 96, 0.35); pointer-events: none; }
 .noor-gate__mono i { margin: 0 0.06em; font-family: var(--f-names); font-size: 0.6em; font-style: normal; }
-.noor-gate__ring { position: absolute; left: calc(51.4cqw - 51cqw); top: calc(42.7cqw - 51cqw); width: 102cqw; height: 102cqw; rotate: -90deg; overflow: visible; pointer-events: none; }
+/* its own layer: the progress stroke repaints every frame of the hold, and would otherwise re-raster the seal under it */
+.noor-gate__ring { will-change: transform; position: absolute; left: calc(51.4cqw - 51cqw); top: calc(42.7cqw - 51cqw); width: 102cqw; height: 102cqw; rotate: -90deg; overflow: visible; pointer-events: none; }
 .noor-gate__ring circle { fill: none; stroke-width: 2.6; }
 .noor-gate__ring-track { stroke: rgba(234, 211, 142, 0.25); }
 .noor-gate__ring-fill { stroke: #ffe7a8; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(255, 214, 140, 0.9)); }
 @keyframes noor-breathe { 50% { scale: 1.035; } }
 
 .noor-gate__hint { position: relative; z-index: 3; align-self: start; display: flex; align-items: center; gap: 0.6rem; margin: clamp(0.9rem, 2.6vh, 1.5rem) 0 0; color: rgba(248, 241, 225, 0.9); font: 600 0.78rem var(--f-body); letter-spacing: 0.24em; text-transform: uppercase; text-align: center; }
-.noor-gate__hint-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--n-gold-light); box-shadow: 0 0 0 0 rgba(234, 211, 142, 0.7); animation: noor-ping 1.8s ease-out infinite; }
+.noor-gate__hint-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--n-gold-light); }
+/* the ping grows by scale, not box-shadow, so it runs on the compositor instead of repainting every frame */
+.noor-gate__hint-dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: rgba(234, 211, 142, 0.7); animation: noor-ping-ring 1.8s ease-out infinite; }
+@keyframes noor-ping-ring { 0% { scale: 1; opacity: 1; } 70%, 100% { scale: 3.5; opacity: 0; } }
 @keyframes noor-ping { 70% { box-shadow: 0 0 0 10px rgba(234, 211, 142, 0); } 100% { box-shadow: 0 0 0 0 rgba(234, 211, 142, 0); } }
 
 /* ---------- lantern (hero + countdown) ---------- */
@@ -153,21 +166,22 @@ html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
 .noor-lantern.is-lit .noor-lantern__glass { opacity: 1; }
 
 /* ---------- 1 · hero ---------- */
-.noor-hero { --px: 0; --py: 0; position: relative; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse 70% 60% at 50% 35%, #1d5039, #0a2318 75%); }
+.noor-hero { position: relative; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate; background: radial-gradient(ellipse 70% 60% at 50% 35%, #1d5039, #0a2318 75%); }
 .noor-hero__wall { position: absolute; inset: 0; opacity: 0.16; background-image: var(--star-tile); background-size: 88px; mask-image: radial-gradient(ellipse at 50% 40%, #000 30%, transparent 85%); }
 .noor-hero__wall::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.45), transparent 60%); }
-.noor-hero__garland { position: absolute; z-index: 4; top: -1.5%; left: 50%; width: min(108vw, 980px); translate: calc(-50% + var(--px) * 10px) calc(var(--py) * 4px); pointer-events: none; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
+.noor-hero__garland { position: absolute; z-index: 4; top: -1.5%; left: 50%; width: min(108vw, 980px); translate: -50% 0; pointer-events: none; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
 
-.noor-hero__stage { --stage-h: min(94svh, 152vw); position: absolute; bottom: 0; left: calc(50% - var(--stage-h) * 0.3185); width: calc(var(--stage-h) * 0.637); height: var(--stage-h); container-type: inline-size; transform-origin: 50% 85%; translate: calc(var(--px) * 5px) calc(var(--py) * 3px); }
+.noor-hero__stage { --stage-h: min(94svh, 152vw); position: absolute; bottom: 0; left: calc(50% - var(--stage-h) * 0.3185); width: calc(var(--stage-h) * 0.637); height: var(--stage-h); container-type: inline-size; transform-origin: 50% 85%; }
 .noor-hero__window { position: absolute; inset: 0; overflow: hidden; -webkit-mask: url("/images/noor/arch-mask.png") center / 100% 100% no-repeat; mask: url("/images/noor/arch-mask.png") center / 100% 100% no-repeat; }
-.noor-hero__sky { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; object-fit: cover; object-position: 50% 30%; translate: calc(var(--px) * -10px) calc(var(--py) * -6px); }
+.noor-hero__sky { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; object-fit: cover; object-position: 50% 30%; }
 .noor-hero__moon-glow { position: absolute; left: 34%; top: 14%; width: 46%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 236, 190, 0.35), transparent 65%); mix-blend-mode: screen; animation: noor-glow 5s ease-in-out infinite; pointer-events: none; }
 @keyframes noor-glow { 50% { opacity: 0.55; scale: 1.08; } }
-.noor-hero__skyline { position: absolute; left: 8%; bottom: 25%; width: 84%; translate: calc(var(--px) * -4px) 0; }
-.noor-hero__sea-shimmer { position: absolute; left: 0; right: 0; bottom: 0; height: 28%; background: repeating-linear-gradient(90deg, transparent 0 40px, rgba(255, 220, 150, 0.12) 40px 70px, transparent 70px 120px); mix-blend-mode: screen; mask-image: linear-gradient(transparent, #000 40%, transparent); animation: noor-shimmer 7s linear infinite; pointer-events: none; }
-@keyframes noor-shimmer { to { background-position: 240px 0; } }
+.noor-hero__skyline { position: absolute; left: 8%; bottom: 25%; width: 84%; }
+.noor-hero__sea-shimmer { position: absolute; left: -240px; right: 0; bottom: 0; height: 28%; background: repeating-linear-gradient(90deg, transparent 0 40px, rgba(255, 220, 150, 0.12) 40px 70px, transparent 70px 120px); mix-blend-mode: screen; mask-image: linear-gradient(transparent, #000 40%, transparent); animation: noor-shimmer 7s linear infinite; pointer-events: none; }
+/* slides by transform (one period of the stripes), not background-position: no repaint inside the arch mask each frame */
+@keyframes noor-shimmer { to { transform: translateX(240px); } }
 .noor-hero__arch { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45)); }
-.noor-hero__couple { position: absolute; z-index: 2; left: 19%; bottom: -1.5%; width: 62%; translate: calc(var(--px) * 8px) 0; filter: drop-shadow(0 -6px 26px rgba(0, 0, 0, 0.35)); }
+.noor-hero__couple { position: absolute; z-index: 2; left: 19%; bottom: -1.5%; width: 62%; filter: drop-shadow(0 -6px 26px rgba(0, 0, 0, 0.35)); }
 
 .noor-hero__window::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(7, 28, 26, 0.72) 0%, rgba(7, 28, 26, 0.5) 42%, rgba(7, 28, 26, 0.12) 58%, transparent 66%); pointer-events: none; }
 .noor-hero__text { position: absolute; z-index: 3; top: 31%; left: 17%; right: 17%; text-align: center; color: var(--n-ivory); }
@@ -189,17 +203,20 @@ html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
 .noor-hero__sky-fx { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 2s ease 0.8s; }
 .noor-hero__sky-fx.is-on { opacity: 1; }
 /* the pointer's light: the carved wall pattern glows gold in a warm pool wherever the pointer (or finger) goes */
-.noor-hero__torch { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 0.8s ease;
-  background: radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(255, 196, 110, 0.16), transparent 70%), var(--star-tile) 0 0 / 88px;
-  -webkit-mask: radial-gradient(circle 200px at var(--mx, 50%) var(--my, 50%), #000, transparent 75%);
-  mask: radial-gradient(circle 200px at var(--mx, 50%) var(--my, 50%), #000, transparent 75%);
-  filter: brightness(1.9) drop-shadow(0 0 3px rgba(255, 210, 130, 0.8)); }
+/* the pool is a 440px box moved by transform; the wall pattern inside it is the hero's size, moved the opposite
+   way so it stays put on the wall: touch moves shift two layers instead of repainting a full-screen filtered mask */
+.noor-hero__torch { position: absolute; left: 0; top: 0; z-index: 0; width: 440px; height: 440px; overflow: hidden; pointer-events: none; opacity: 0; transition: opacity 0.8s ease; will-change: transform;
+  background: radial-gradient(circle 220px at 50% 50%, rgba(255, 255, 209, 0.16), transparent 70%);
+  -webkit-mask: radial-gradient(circle 200px at 50% 50%, #000, transparent 75%);
+  mask: radial-gradient(circle 200px at 50% 50%, #000, transparent 75%); }
+.noor-hero__torch > span { position: absolute; left: 0; top: 0; width: var(--w, 100vw); height: var(--h, 100svh); background: var(--star-tile) 0 0 / 88px; filter: brightness(1.9) drop-shadow(0 0 3px rgba(255, 210, 130, 0.8)); will-change: transform; }
 .noor-hero.is-lit-by-pointer .noor-hero__torch { opacity: 1; }
 .noor-hero { cursor: crosshair; touch-action: pan-y; }
 /* both lanterns lit: a sky of lanterns rises from below the couple and floats out of the top */
 /* behind the arch (z-index 0, before the stage), so a balloon never crosses the arch or the names */
 .noor-hero__sky-lanterns { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.noor-hero__sky-lanterns img { position: absolute; left: var(--x); bottom: var(--floor, -12%); width: var(--size); margin-left: calc(var(--size) / -2); opacity: 0; filter: drop-shadow(0 0 14px rgba(255, 190, 100, 0.75)); animation: noor-rise var(--dur) linear var(--delay) infinite; }
+.noor-hero__sky-lanterns > span { position: absolute; left: var(--x); bottom: var(--floor, -12%); width: var(--size); margin-left: calc(var(--size) / -2); opacity: 0; animation: noor-rise var(--dur) linear var(--delay) infinite; }
+.noor-hero__sky-lanterns img { display: block; width: 100%; filter: drop-shadow(0 0 14px rgba(255, 190, 100, 0.75)); }
 @keyframes noor-rise {
   0% { transform: translate(0, 0) rotate(-2deg) scale(1); opacity: 0; }
   6% { opacity: 1; }

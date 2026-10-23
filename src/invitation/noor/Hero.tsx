@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { weddingConfig } from "@/config/wedding";
 import { HeroSky } from "./HeroSky";
 import { Lantern } from "./Lantern";
-import { img, loadMotion } from "./motion";
+import { ease, img, loadMotion, springEasing } from "./motion";
 import { petalBurst } from "./petals";
 import { buzz, playSfx, prefersReducedMotion } from "./sound";
 
@@ -54,46 +54,60 @@ export function Hero({ opened, settled }: { opened: boolean; settled: boolean })
     if (prefersReducedMotion()) return;
     let cancelled = false;
     void (async () => {
-      const { animate, splitText, stagger, spring } = await import("animejs");
+      const { splitText, spring } = await import("animejs");
       if (cancelled) return;
+      // Web Animations throughout: they run on the compositor while the doors are still opening above, so a
+      // busy main thread can't stutter them, and nothing here repaints the arch, couple or text per frame
       // the camera settles after walking through the doors; the garland drops in on its strings
-      // the settle zooms one GPU layer instead of re-painting the arch, couple and their shadows every frame
-      const stage = el.querySelector<HTMLElement>(".noor-hero__stage")!;
-      stage.style.willChange = "transform";
-      animate(stage, { scale: [1.14, 1], duration: 2600, ease: "out(4)", onComplete: () => { stage.style.willChange = ""; } });
-      animate(el.querySelector(".noor-hero__garland")!, { y: ["-60%", "0%"], ease: spring({ bounce: 0.45, duration: 1800 }), delay: 500 });
+      el.querySelector(".noor-hero__stage")?.animate([{ transform: "scale(1.14)" }, { transform: "none" }], { duration: 2600, easing: ease.outQuart });
+      el.querySelector(".noor-hero__garland")?.animate([{ transform: "translateY(-60%)" }, { transform: "none" }], { ...springEasing(spring({ bounce: 0.45, duration: 1800 })), delay: 500, fill: "backwards" });
+      // the soft focus-in is desktop only: phones get the rise and fade
+      const blur = window.innerWidth >= 760;
       for (const name of el.querySelectorAll<HTMLElement>(".noor-hero__name")) {
         const { chars } = splitText(name, { chars: true });
-        animate(chars, {
-          opacity: [0, 1], y: ["0.45em", "0em"],
-          // the soft focus-in costs a filter repaint per letter per frame: phones get the rise and fade only
-          ...(window.innerWidth >= 760 ? { filter: ["blur(5px)", "blur(0px)"] } : {}),
-          delay: stagger(38, { start: 350 + (name.dataset["order"] === "2" ? 300 : 0) }), duration: 700, ease: "out(3)",
-        });
+        const start = 350 + (name.dataset["order"] === "2" ? 300 : 0);
+        chars.forEach((char, i) => char.animate([
+          { opacity: 0, transform: "translateY(0.45em)", ...(blur ? { filter: "blur(5px)" } : {}) },
+          { opacity: 1, transform: "none", ...(blur ? { filter: "blur(0px)" } : {}) },
+        ], { duration: 700, delay: start + i * 38, easing: ease.outCubic, fill: "backwards" }));
       }
     })();
     return () => { cancelled = true; };
   }, [opened]);
 
-  // Parallax: mouse on desktop, tilt on phones that allow it without a prompt.
+  // Parallax: mouse on desktop, tilt on phones that allow it without a prompt. Each layer gets its own inline
+  // translate (no CSS variables on the hero, which would restyle everything in it) and is promoted while the
+  // effect runs, so a phone's constant tilt events move GPU layers instead of repainting the arch and couple.
   useEffect(() => {
     const el = root.current;
     if (!el || prefersReducedMotion()) return;
-    let tx = 0, ty = 0, x = 0, y = 0, frame = 0;
+    const layers = ([
+      [".noor-hero__garland", 10, 4, "-50%"], [".noor-hero__stage", 5, 3], [".noor-hero__sky", -10, -6],
+      [".noor-hero__skyline", -4, 0], [".noor-hero__couple", 8, 0],
+    ] as const).flatMap(([selector, fx, fy, base]) => {
+      const node = el.querySelector<HTMLElement>(selector);
+      return node ? [{ node, fx, fy, base: base ?? "0px" }] : [];
+    });
+    let tx = 0, ty = 0, x = 0, y = 0, frame = 0, promoted = false;
     const loop = () => {
       x += (tx - x) * 0.06; y += (ty - y) * 0.06;
-      el.style.setProperty("--px", x.toFixed(3));
-      el.style.setProperty("--py", y.toFixed(3));
-      frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.001 ? requestAnimationFrame(loop) : 0;
+      for (const { node, fx, fy, base } of layers) node.style.translate = `calc(${base} + ${(x * fx).toFixed(2)}px) ${(y * fy).toFixed(2)}px`;
+      frame = Math.abs(tx - x) + Math.abs(ty - y) > 0.002 ? requestAnimationFrame(loop) : 0;
     };
-    const kick = () => { if (!frame) frame = requestAnimationFrame(loop); };
+    const kick = (nx: number, ny: number) => {
+      // ignore sensor jitter, so the loop can come to rest while the phone is held still
+      if (Math.abs(nx - tx) + Math.abs(ny - ty) < 0.01) return;
+      tx = nx; ty = ny;
+      if (!promoted) { promoted = true; layers.forEach(({ node }) => { node.style.willChange = "transform"; }); }
+      if (!frame) frame = requestAnimationFrame(loop);
+    };
     const onMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
-      tx = (event.clientX / window.innerWidth - 0.5) * 2; ty = (event.clientY / window.innerHeight - 0.5) * 2; kick();
+      kick((event.clientX / window.innerWidth - 0.5) * 2, (event.clientY / window.innerHeight - 0.5) * 2);
     };
     const onTilt = (event: DeviceOrientationEvent) => {
       if (event.gamma == null || event.beta == null) return;
-      tx = Math.max(-1, Math.min(1, event.gamma / 25)); ty = Math.max(-1, Math.min(1, (event.beta - 45) / 25)); kick();
+      kick(Math.max(-1, Math.min(1, event.gamma / 25)), Math.max(-1, Math.min(1, (event.beta - 45) / 25)));
     };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("deviceorientation", onTilt);
@@ -168,10 +182,9 @@ function SkyLanterns({ flight }: { flight: Flight }) {
   return (
     <div className="noor-hero__sky-lanterns" style={{ "--floor": flight.floor } as React.CSSProperties} aria-hidden="true">
       {flight.balloons.map((b, i) => (
-        <img
+        // the glow sits on the image, the rise on its wrapper: the shadow is painted once instead of re-blurred every frame
+        <span
           key={i}
-          src={img("sky-lantern")}
-          alt=""
           style={{
             "--x": `${b.x}%`,
             "--size": `${b.size}px`,
@@ -179,7 +192,7 @@ function SkyLanterns({ flight }: { flight: Flight }) {
             "--dur": `${b.dur}s`,
             "--delay": `${b.delay}s`,
           } as React.CSSProperties}
-        />
+        ><img src={img("sky-lantern")} alt="" /></span>
       ))}
     </div>
   );

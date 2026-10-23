@@ -1,5 +1,5 @@
 import { useRef, type CSSProperties, type ReactNode } from "react";
-import { img } from "./motion";
+import { img, springEasing } from "./motion";
 import { buzz, playSfx, prefersReducedMotion } from "./sound";
 
 type Props = {
@@ -19,9 +19,10 @@ export function Lantern({ lit, onLight, label, className = "", style, children }
   const swing = async () => {
     const el = body.current;
     if (!el || prefersReducedMotion()) return;
-    const { animate, spring } = await import("animejs");
+    const { spring } = await import("animejs");
     const push = (Math.random() > 0.5 ? 1 : -1) * (14 + Math.random() * 8);
-    animate(el, { rotate: [push, 0], ease: spring({ bounce: 0.65, duration: 2200 }) });
+    // a Web Animation on the compositor, composed with the idle sway (the CSS rotate property)
+    el.animate([{ transform: `rotate(${push}deg)` }, { transform: "none" }], springEasing(spring({ bounce: 0.65, duration: 2200 })));
   };
 
   return (
