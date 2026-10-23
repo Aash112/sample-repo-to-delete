@@ -87,7 +87,7 @@ export function NoorInvitation() {
 
       <Gate onHoldStart={onHoldStart} onHoldCancel={onHoldCancel} onUnseal={onUnseal} onReveal={() => setRevealed(true)} onOpened={() => setOpened(true)} />
 
-      <Hero opened={revealed} />
+      <Hero opened={revealed} settled={opened} />
       <div className="noor-paper">
         <GoldenThread />
         <DateReveal />

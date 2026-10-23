@@ -18,6 +18,9 @@ let ctx: CanvasRenderingContext2D | null = null;
 let frame = 0;
 let last = 0;
 let drizzleTimer = 0;
+let dpr = 1;
+/** Phones get fewer petals per burst: the effect still reads, at a fraction of the drawing work. */
+const scaled = (count: number) => (window.innerWidth < 760 ? Math.ceil(count * 0.6) : count);
 
 function ensureCanvas() {
   if (canvas || typeof document === "undefined") return;
@@ -28,7 +31,8 @@ function ensureCanvas() {
   ctx = canvas.getContext("2d");
   const resize = () => {
     if (!canvas) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // petals are soft and small: 1.5x is sharp enough, and a 3x full-screen canvas is a lot to clear and fill
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     canvas.width = window.innerWidth * dpr;
     canvas.height = window.innerHeight * dpr;
     ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -59,10 +63,10 @@ function tick(now: number) {
     p.rot += p.vr * dt;
     const fade = Math.min(1, (p.maxLife - p.life) / 0.6);
     if (p.life > p.maxLife || p.y > window.innerHeight + 60) { particles.splice(i, 1); continue; }
-    ctx.save();
+    // one transform per petal (position, rotation and pixel ratio) instead of save/translate/rotate/restore
+    const cos = Math.cos(p.rot) * dpr, sin = Math.sin(p.rot) * dpr;
+    ctx.setTransform(cos, sin, -sin, cos, p.x * dpr, p.y * dpr);
     ctx.globalAlpha = Math.max(0, fade);
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
     if (p.img?.complete && p.img.naturalWidth) {
       const ratio = p.img.naturalHeight / p.img.naturalWidth;
       ctx.drawImage(p.img, -p.size / 2, (-p.size * ratio) / 2, p.size, p.size * ratio);
@@ -72,8 +76,9 @@ function tick(now: number) {
       ctx.ellipse(0, 0, p.size / 2, p.size / 4, 0, 0, Math.PI * 2);
       ctx.fill();
     }
-    ctx.restore();
   }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.globalAlpha = 1;
   frame = particles.length ? requestAnimationFrame(tick) : 0;
 }
 
@@ -92,7 +97,7 @@ const pick = () => pickFrom(BURST);
 export function petalBurst(x: number, y: number, count = 36) {
   if (prefersReducedMotion()) return;
   ensureCanvas();
-  for (let i = 0; i < count; i++) {
+  for (let i = 0; i < scaled(count); i++) {
     const angle = Math.random() * Math.PI * 2;
     const speed = 160 + Math.random() * 420;
     particles.push({

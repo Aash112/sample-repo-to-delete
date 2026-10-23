@@ -22,7 +22,10 @@ export function GoldenThread() {
     const glows = [...svg.querySelectorAll<SVGPathElement>(".noor-thread__glow")];
     const sparks = [...svg.querySelectorAll<SVGGElement>(".noor-thread__spark")];
     const nodeLayer = svg.querySelector<SVGGElement>(".noor-thread__nodes")!;
-    let table: { y: number; len: number }[] = [];
+    // the path is straight runs plus half-circle bends, so its length at any height is computed exactly
+    // (sampling it with getPointAtLength took over a second on phones, on every scroll refresh)
+    let bends: number[] = [];
+    let r = BEND_R, x = 0, w = 0, h = 0;
     let total = 0;
     let nodes: { y: number; els: SVGElement[] }[] = [];
     let kill = () => {};
@@ -32,14 +35,15 @@ export function GoldenThread() {
     const sideX = (w: number) => (w < 760 ? 7 : Math.max(22, (w - 1120) / 2 - 36));
 
     const build = () => {
-      const w = paper.clientWidth, h = paper.scrollHeight;
+      w = paper.clientWidth; h = paper.scrollHeight;
       svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
       svg.style.height = `${h}px`;
       const top = paper.getBoundingClientRect().top;
       const ys = [...paper.querySelectorAll<HTMLElement>(":scope > section")].slice(1)
         .map((s) => s.getBoundingClientRect().top - top + 6);
-      const x = sideX(w);
-      const r = w < 760 ? 6 : BEND_R;
+      x = sideX(w);
+      r = w < 760 ? 6 : BEND_R;
+      bends = ys;
       // one path per side; each bends inward (toward the content) at every section
       const make = (side: number, inward: number) => {
         let d = `M${side} 0`;
@@ -49,12 +53,7 @@ export function GoldenThread() {
       const left = make(x, 1), right = make(w - x, -1);
       [lines[0], glows[0]].forEach((p) => p?.setAttribute("d", left));
       [lines[1], glows[1]].forEach((p) => p?.setAttribute("d", right));
-      // length lookup by height (the path only ever goes down)
-      const probe = lines[0]!;
-      total = probe.getTotalLength();
-      table = [];
-      for (let len = 0; len <= total; len += 6) table.push({ y: probe.getPointAtLength(len).y, len });
-      table.push({ y: h, len: total });
+      total = lengthAt(h);
       for (const p of [...lines, ...glows]) { p.style.strokeDasharray = `${total}`; p.style.strokeDashoffset = still ? "0" : `${total}`; }
       // the diamond is centred on the arc's centre and sized to leave the same gap to the arc on every side
       const size = r * 0.78;
@@ -74,22 +73,39 @@ export function GoldenThread() {
       draw();
     };
 
+    /** How far into a bend a height is: the arc's angle (0 at its top, π at its bottom), or null if outside. */
+    const bendAngle = (y: number, at: number) => (Math.abs(y - at) < r ? Math.acos((at - y) / r) : null);
+
     const lengthAt = (y: number) => {
-      if (y <= 0) return 0;
-      let lo = 0, hi = table.length - 1;
-      while (lo < hi) { const mid = (lo + hi) >> 1; if ((table[mid]?.y ?? 0) < y) lo = mid + 1; else hi = mid; }
-      return table[lo]?.len ?? total;
+      const target = Math.min(Math.max(y, 0), h);
+      let len = 0, from = 0;
+      for (const at of bends) {
+        if (target <= at - r) return len + target - from;
+        len += at - r - from;
+        const angle = bendAngle(target, at);
+        if (angle !== null) return len + r * angle;
+        len += Math.PI * r;
+        from = at + r;
+      }
+      return len + target - from;
+    };
+
+    /** The thread's x at a height, on the side that starts at `side` and bends toward `inward`. */
+    const xAt = (y: number, side: number, inward: number) => {
+      for (const at of bends) { const angle = bendAngle(y, at); if (angle !== null) return side + inward * r * Math.sin(angle); }
+      return side;
     };
 
     const draw = () => {
-      if (still || !table.length) return;
+      if (still || !total) return;
       const tipY = window.innerHeight * 0.72 - paper.getBoundingClientRect().top;
       const len = Math.min(total, lengthAt(tipY));
       for (const p of [...lines, ...glows]) p.style.strokeDashoffset = String(total - len);
       for (const n of nodes) n.els.forEach((el) => el.classList.toggle("is-lit", tipY > n.y));
+      const y = Math.min(Math.max(tipY, 0), h);
       sparks.forEach((spark, i) => {
-        const pt = (lines[i] ?? lines[0]!).getPointAtLength(len);
-        spark.setAttribute("transform", `translate(${pt.x} ${pt.y})`);
+        const sx = i === 0 ? xAt(y, x, 1) : xAt(y, w - x, -1);
+        spark.setAttribute("transform", `translate(${sx} ${y})`);
         spark.style.opacity = len > 4 && len < total - 4 ? "1" : "0";
       });
     };

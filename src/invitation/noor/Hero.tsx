@@ -40,7 +40,8 @@ function balloonLayout(hero: HTMLElement): Flight {
 
 const { couple, invitation, noor } = weddingConfig;
 
-export function Hero({ opened }: { opened: boolean }) {
+/** `opened`: the doors have started to open (entrance plays); `settled`: the gate is gone (heavy work may run). */
+export function Hero({ opened, settled }: { opened: boolean; settled: boolean }) {
   const root = useRef<HTMLElement>(null);
   const [lit, setLit] = useState([false, false]);
   const [flight, setFlight] = useState<Flight | null>(null);
@@ -56,12 +57,17 @@ export function Hero({ opened }: { opened: boolean }) {
       const { animate, splitText, stagger, spring } = await import("animejs");
       if (cancelled) return;
       // the camera settles after walking through the doors; the garland drops in on its strings
-      animate(el.querySelector(".noor-hero__stage")!, { scale: [1.14, 1], duration: 2600, ease: "out(4)" });
+      // the settle zooms one GPU layer instead of re-painting the arch, couple and their shadows every frame
+      const stage = el.querySelector<HTMLElement>(".noor-hero__stage")!;
+      stage.style.willChange = "transform";
+      animate(stage, { scale: [1.14, 1], duration: 2600, ease: "out(4)", onComplete: () => { stage.style.willChange = ""; } });
       animate(el.querySelector(".noor-hero__garland")!, { y: ["-60%", "0%"], ease: spring({ bounce: 0.45, duration: 1800 }), delay: 500 });
       for (const name of el.querySelectorAll<HTMLElement>(".noor-hero__name")) {
         const { chars } = splitText(name, { chars: true });
         animate(chars, {
-          opacity: [0, 1], y: ["0.45em", "0em"], filter: ["blur(5px)", "blur(0px)"],
+          opacity: [0, 1], y: ["0.45em", "0em"],
+          // the soft focus-in costs a filter repaint per letter per frame: phones get the rise and fade only
+          ...(window.innerWidth >= 760 ? { filter: ["blur(5px)", "blur(0px)"] } : {}),
           delay: stagger(38, { start: 350 + (name.dataset["order"] === "2" ? 300 : 0) }), duration: 700, ease: "out(3)",
         });
       }
@@ -94,14 +100,15 @@ export function Hero({ opened }: { opened: boolean }) {
     return () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("deviceorientation", onTilt); cancelAnimationFrame(frame); };
   }, []);
 
-  // Fonts change the page height once they load: re-measure every scroll trigger below the hero.
+  // Fonts change the page height once they load: re-measure every scroll trigger below the hero. Waits until the
+  // gate is gone, so this layout work never lands on top of the door animation.
   useEffect(() => {
-    if (!opened) return;
+    if (!settled) return;
     void loadMotion().then(({ ScrollTrigger }) => {
       ScrollTrigger.refresh();
       void document.fonts?.ready.then(() => ScrollTrigger.refresh());
     });
-  }, [opened]);
+  }, [settled]);
 
   const light = (index: number) => setLit((state) => state.map((value, i) => (i === index ? true : value)));
 

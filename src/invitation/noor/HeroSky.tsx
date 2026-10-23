@@ -29,11 +29,22 @@ export function HeroSky({ active }: { active: boolean }) {
   useEffect(() => {
     const canvas = canvasRef.current;
     const host = canvas?.parentElement;
-    if (!canvas || !host || prefersReducedMotion()) return;
+    // nothing runs until the doors open: the gate and its animation get the whole frame budget
+    if (!active || !canvas || !host || prefersReducedMotion()) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let w = 0, h = 0, frame = 0, last = performance.now(), nextStar = 2.5, visible = true;
+    // a star's glow, drawn once and stamped (no gradient objects built per star per frame)
+    const glow = document.createElement("canvas");
+    glow.width = glow.height = 64;
+    const gctx = glow.getContext("2d")!;
+    const grad = gctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, `rgba(${GOLD}, 0.3)`);
+    grad.addColorStop(1, `rgba(${GOLD}, 0)`);
+    gctx.fillStyle = grad;
+    gctx.fillRect(0, 0, 64, 64);
+
     const pointer = { x: -9999, y: -9999, on: false, px: 0, py: 0 };
     const twinkles: Twinkle[] = [];
     const stars: Star[] = [];
@@ -50,7 +61,7 @@ export function HeroSky({ active }: { active: boolean }) {
 
     const resize = () => {
       const rect = host.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       w = rect.width; h = rect.height;
       canvas.width = w * dpr; canvas.height = h * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -113,17 +124,12 @@ export function HeroSky({ active }: { active: boolean }) {
         const x = t.x - pointer.px * 14 * t.depth, y = t.y - pointer.py * 9 * t.depth;
         const shine = 0.35 + 0.4 * (0.5 + 0.5 * Math.sin(t.phase)) + t.wake * 0.5;
         const r = t.size * (1 + t.wake * 0.6);
-        const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 4);
-        halo.addColorStop(0, `rgba(${GOLD}, ${0.28 * shine})`);
-        halo.addColorStop(1, `rgba(${GOLD}, 0)`);
-        ctx.fillStyle = halo;
-        ctx.beginPath(); ctx.arc(x, y, r * 4, 0, Math.PI * 2); ctx.fill();
-        const body = ctx.createLinearGradient(x - r, y - r, x + r, y + r);
-        body.addColorStop(0, `rgba(255, 246, 214, ${Math.min(1, shine)})`);
-        body.addColorStop(1, `rgba(214, 160, 70, ${Math.min(1, shine)})`);
-        ctx.fillStyle = body;
+        ctx.globalAlpha = Math.min(1, shine);
+        ctx.drawImage(glow, x - r * 4, y - r * 4, r * 8, r * 8);
+        ctx.fillStyle = "#f7dc96";
         starPath(ctx, x, y, r, t.rot);
         ctx.fill();
+        ctx.globalAlpha = 1;
         if (t.glint > 0) {
           // a four-ray glint flashing across the star
           const g = Math.sin(t.glint * Math.PI), len = r * (3 + 4 * g);
@@ -232,7 +238,7 @@ export function HeroSky({ active }: { active: boolean }) {
       host.removeEventListener("pointerup", onTouchEnd);
       host.removeEventListener("pointerdown", onTap);
     };
-  }, []);
+  }, [active]);
 
   return (
     <>

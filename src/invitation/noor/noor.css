@@ -79,6 +79,10 @@ html:has(.noor) { scrollbar-gutter: stable; background: #0a2318; }
 }
 .noor-gate--fade { opacity: 0; transition: opacity 0.6s ease; }
 .noor-gate.is-through { pointer-events: none; }
+/* once the doors open, stop everything that would keep repainting under the zoom: the doors' soft shadows
+   (a blur filter on a layer being scaled up several times) and the gate's idle loops */
+.noor-gate.is-opening .noor-gate__door { filter: none; }
+.noor-gate.is-opening .noor-gate__motes, .noor-gate.is-opening .noor-gate__wall::after { animation: none; display: none; }
 /* the carved emerald wall: a child of the stage, reaching far past the screen edges, with the doorway cut out of
    it (doorway-mask.png = both doors' outline, eroded 3px so the doors always cover its edge) */
 .noor-gate__wall {
