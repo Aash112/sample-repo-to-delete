@@ -6,8 +6,7 @@ const BEND_R = 9;
 
 /**
  * Two gold threads down the paper's side margins that draw with the scroll (a spark at each tip), bending
- * inward in a small arc at every section around a diamond that sits in the arc's hollow (an even gap all round)
- * and lights up when the thread reaches it. Lives behind content
+ * inward in a small arc at every section, with a diamond node at each bend that lights up when the thread reaches it. Lives behind content
  * and only in the margins, so it never crosses text.
  */
 export function GoldenThread() {
@@ -55,14 +54,12 @@ export function GoldenThread() {
       [lines[1], glows[1]].forEach((p) => p?.setAttribute("d", right));
       total = lengthAt(h);
       for (const p of [...lines, ...glows]) { p.style.strokeDasharray = `${total}`; p.style.strokeDashoffset = still ? "0" : `${total}`; }
-      // the diamond is centred on the arc's centre and sized to leave the same gap to the arc on every side
-      const size = r * 0.78;
       nodeLayer.replaceChildren();
       nodes = ys.map((y) => {
-        const els = [x, w - x].map((cx) => {
+        const els = [x + r, w - x - r].map((cx) => {
           const n = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-          n.setAttribute("x", String(cx - size / 2)); n.setAttribute("y", String(y - size / 2));
-          n.setAttribute("width", String(size)); n.setAttribute("height", String(size));
+          n.setAttribute("x", String(cx - 4)); n.setAttribute("y", String(y - 4));
+          n.setAttribute("width", "8"); n.setAttribute("height", "8");
           n.setAttribute("transform", `rotate(45 ${cx} ${y})`);
           n.setAttribute("class", `noor-thread__node${still ? " is-lit" : ""}`);
           nodeLayer.appendChild(n);

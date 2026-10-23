@@ -49,7 +49,7 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 .noor-title em { color: var(--n-gold-deep); font-style: italic; font-weight: 400; }
 .noor-lede { max-width: 36rem; margin: 0 auto; color: var(--n-text); font-size: clamp(1.15rem, 2.4vw, 1.4rem); line-height: 1.6; text-wrap: pretty; }
 .noor-lede--light { color: rgba(248, 241, 225, 0.82); }
-.noor-hint { margin: 0.8rem 0 0; color: rgba(18, 53, 36, 0.8); font: italic 600 clamp(1.1rem, 3.6vw, 1.3rem) var(--f-body); letter-spacing: 0.01em; }
+.noor-hint { margin: 0.8rem 0 0; color: rgba(18, 53, 36, 0.8); font: italic 500 1rem var(--f-body); }
 .noor-hint--light { color: rgba(240, 222, 160, 0.95); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
 .noor-rule { display: flex; align-items: center; gap: 0.6rem; width: 9rem; margin: 0.4rem auto; color: var(--n-gold); }
 .noor-rule::before, .noor-rule::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--n-gold)); }
@@ -171,7 +171,7 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 .noor-hero__wall::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.45), transparent 60%); }
 .noor-hero__garland { position: absolute; z-index: 4; top: -1.5%; left: 50%; width: min(108vw, 980px); translate: -50% 0; pointer-events: none; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
 
-.noor-hero__stage { --stage-h: min(94svh, 152vw); position: absolute; bottom: 0; left: calc(50% - var(--stage-h) * 0.3185); width: calc(var(--stage-h) * 0.637); height: var(--stage-h); container-type: inline-size; transform-origin: 50% 85%; }
+.noor-hero__stage { --stage-h: min(94svh, 165vw); position: absolute; bottom: 0; left: calc(50% - var(--stage-h) * 0.3185); width: calc(var(--stage-h) * 0.637); height: var(--stage-h); container-type: inline-size; transform-origin: 50% 85%; }
 .noor-hero__window { position: absolute; inset: 0; overflow: hidden; -webkit-mask: url("/images/noor/arch-mask.png") center / 100% 100% no-repeat; mask: url("/images/noor/arch-mask.png") center / 100% 100% no-repeat; }
 .noor-hero__sky { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; object-fit: cover; object-position: 50% 30%; }
 .noor-hero__moon-glow { position: absolute; left: 34%; top: 14%; width: 46%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(255, 236, 190, 0.35), transparent 65%); mix-blend-mode: screen; animation: noor-glow 5s ease-in-out infinite; pointer-events: none; }
@@ -197,7 +197,7 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 .noor-hero__lantern { position: absolute; z-index: 5; top: 0; --w: clamp(56px, 13vw, 96px); }
 .noor-hero__lantern--left { left: max(3vw, calc(50% - 46vh)); --chain: clamp(8px, 4vh, 60px); --sway: 6.5s; }
 .noor-hero__lantern--right { right: max(3vw, calc(50% - 46vh)); --chain: clamp(30px, 10vh, 120px); --sway: 5.6s; --sway-delay: -2s; }
-.noor-hero__hint { position: absolute; z-index: 5; top: calc(clamp(30px, 10vh, 120px) + clamp(56px, 13vw, 96px) * 2 + 0.4rem); right: max(4px, calc(max(3vw, calc(50% - 46vh)) - 28px)); width: calc(clamp(56px, 13vw, 96px) + 56px); margin: 0; color: #f6e3a4; font: italic 600 clamp(1rem, 3.4vw, 1.2rem)/1.2 var(--f-body); text-align: center; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 0, 0, 0.7); animation: noor-fade-pulse 2.4s ease-in-out infinite; pointer-events: none; }
+.noor-hero__hint { position: absolute; z-index: 5; top: calc(clamp(30px, 10vh, 120px) + clamp(56px, 13vw, 96px) * 2 + 0.4rem); right: max(3vw, calc(50% - 46vh)); width: clamp(56px, 13vw, 96px); margin: 0; color: #f6e3a4; font: italic 500 0.82rem/1.2 var(--f-body); text-align: center; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 0 14px rgba(0, 0, 0, 0.7); animation: noor-fade-pulse 2.4s ease-in-out infinite; pointer-events: none; }
 @keyframes noor-fade-pulse { 50% { opacity: 0.6; } }
 /* fireflies + shooting stars (HeroSky): above the arch, under the garland and the hanging lanterns */
 .noor-hero__sky-fx { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 2s ease 0.8s; }
@@ -419,7 +419,7 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 /* ---------- 9 · footer ---------- */
 .noor-footer { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 0 16px calc(2.6rem + env(safe-area-inset-bottom)); color: var(--n-ivory); text-align: center; background: var(--n-emerald-ink); }
 .noor-footer::before { content: ""; position: absolute; inset: 0; opacity: 0.07; background-image: var(--star-tile); background-size: 88px; pointer-events: none; }
-.noor-footer__border { position: relative; display: block; width: max(min(140vw, 1400px), 100vw); max-width: none; margin-top: clamp(-34px, -4vw, -14px); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
+.noor-footer__border { position: relative; display: block; width: min(140vw, 1400px); max-width: none; margin-top: clamp(-34px, -4vw, -14px); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5)); }
 .noor-footer__sky { position: relative; width: min(100%, 460px); aspect-ratio: 1 / 0.82; margin-top: 1.4rem; }
 .noor-footer__star { position: absolute; border-radius: 50%; translate: -50% -50%; background: #fff4cc; box-shadow: 0 0 6px 1px rgba(255, 230, 160, 0.85); animation: noor-twinkle 3.4s ease-in-out infinite; }
 @keyframes noor-twinkle { 50% { opacity: 0.35; } }
@@ -455,13 +455,6 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 @keyframes noor-bars { 50% { scale: 1 0.3; } }
 
 /* ---------- larger screens ---------- */
-/* phones: the lantern hint sits under the left lantern; the gate's wall lanterns shrink clear of the heading */
-@media (max-width: 759px) {
-  .noor-hero__hint { right: auto; left: max(3vw, 8px); top: calc(clamp(8px, 4vh, 60px) + clamp(56px, 13vw, 96px) * 2 + 0.5rem); width: max-content; max-width: 46vw; text-align: left; }
-  .noor-gate__wall-lantern { width: clamp(34px, 10vw, 54px); }
-  .noor-gate__wall-lantern--left { left: 2vw; top: -5%; }
-  .noor-gate__wall-lantern--right { right: 2vw; top: -4%; }
-}
 @media (min-width: 760px) {
   .noor-map { width: 100%; margin-inline: 0; border-radius: 22px; box-shadow: 0 30px 60px -28px rgba(15, 46, 32, 0.6), 0 0 0 1px rgba(201, 162, 74, 0.45); }
   .noor-footer__families { grid-template-columns: repeat(3, 1fr); }
@@ -473,17 +466,6 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
   .noor-venue__panel .noor-button { width: 100%; }
 }
 @media (min-width: 980px) {
-  /* RSVP: a fuller letter on desktop (the envelope that seals it scales with the same box) */
-  .noor-env { width: min(100%, 680px); }
-  .noor-letter { gap: 1.7rem; padding: 3rem 3.2rem 2.8rem; }
-  .noor-field > span, .noor-choice legend, .noor-stepper > span { font-size: 0.82rem; }
-  .noor-field input, .noor-field textarea { font-size: 1.55rem; }
-  .noor-choice { gap: 1rem; }
-  .noor-choice__card { padding: 1.2rem 0.8rem 1.1rem; font-size: 1.15rem; }
-  .noor-choice__card img { width: 32px; height: 64px; }
-  .noor-stepper__control button { width: 52px; height: 52px; font-size: 1.6rem; }
-  .noor-stepper__control output { font-size: 2.4rem; }
-  .noor-letter .noor-button { min-height: 3.6rem; font-size: 0.95rem; }
   .noor-paper > .noor-story { grid-template-columns: 1fr 1fr; column-gap: 4rem; text-align: left; }
   .noor-paper > .noor-story::before { grid-column: 1 / -1; }
   .noor-nikah { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; column-gap: 3.5rem; }
@@ -508,7 +490,7 @@ html.noor-site { scrollbar-gutter: stable; background: #0a2318; }
 .noor-thread svg { position: absolute; left: 0; top: 0; width: 100%; overflow: visible; }
 .noor-thread__line { fill: none; stroke: #c9a24a; stroke-width: 1.4; stroke-linecap: round; }
 .noor-thread__glow { fill: none; stroke: rgba(246, 184, 96, 0.35); stroke-width: 6; stroke-linecap: round; }
-.noor-thread__node { fill: var(--n-paper); stroke: rgba(201, 162, 74, 0.7); stroke-width: 1.1; transition: fill 0.5s ease, stroke 0.5s ease, filter 0.5s ease; }
+.noor-thread__node { fill: var(--n-paper); stroke: rgba(201, 162, 74, 0.7); stroke-width: 1.2; transition: fill 0.5s ease, stroke 0.5s ease, filter 0.5s ease; }
 .noor-thread__node.is-lit { fill: #e8c46a; stroke: #b98c2e; filter: drop-shadow(0 0 4px rgba(246, 184, 96, 0.9)); }
 .noor-thread__spark { opacity: 0; transition: opacity 0.3s; }
 .noor-thread__spark circle:first-child { animation: noor-flicker 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
